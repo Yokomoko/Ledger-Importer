@@ -13,6 +13,7 @@
     using System.Threading;
     using System.Windows.Forms;
     using System.Drawing.Text;
+    using System.IO;
     using System.Runtime.Remoting.Channels;
     using System.Windows.Forms.VisualStyles;
 
@@ -62,13 +63,36 @@
         */
         private void DirectorySelectionClick(object sender, EventArgs e)
         {
+            /*
+            else
+            {
+                if (ExcelImport.ExcelDialogBox(this.gpExcelFileFind).ShowDialog()
+                    != System.Windows.Forms.DialogResult.OK)
+                {
+                    return;
+                }
+                try
+                {
+                    this.Table = ExcelImport.GetData(this.gpWorksheetCombo.Text, this.gpExcelSheetName);
+                }
+                catch (ArgumentException iaex)
+                {
+                    LogToText.WriteToLog($"Invalid Argument (Might have pressed close on the directory box - {iaex}");
+                    return;
+                }
+                this.TableBindingSource.DataSource = this.Table;
+            }
+            */
             if (this.ImportTypeCombo.SelectedIndex == -1)
             {
                 MessageBox.Show(@"Please select an import type first.");
             }
             else
             {
-                ExcelImport.ExcelDialogBox(this.ExcelFileFind);
+                if (ExcelImport.ExcelDialogBox(this.ExcelFileFind).ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                {
+                    return;
+                }
                 try
                 {
                     this.Table = ExcelImport.GetData(this.ExcelSheetName.Text, this.DirectoryBox);
@@ -310,25 +334,17 @@
             this.CreateNewReportWindow(@"/Customer Ledger by Group");
         }
 
-        private void invoicesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.CreateNewReportWindow(@"/Invoices");
-        }
-
-        private void ledgerByMaintenanceTypeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.CreateNewReportWindow(@"/Ledger by Maintenance Type");
-        }
-
-        private void ledgerSummaryToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            this.CreateNewReportWindow(@"/Ledger Summary");
-        }
 
         private void invoicesPostedToPAndLToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.CreateNewReportWindow(@"/Invoices Posted to P and L");
         }
+
+        private void customerStatementToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.CreateNewReportWindow(@"/Customer Statement");
+        }
+
         private void CreateNewReportWindow(string path)
         {
             bool stopTimer = false;
@@ -338,16 +354,32 @@
 
             if (this.IsSqlClrTypesInstalled() == true)
             {
-                if (IsReportViewerInstalled() == true)
+                if (this.IsReportViewerInstalled() == true)
                 {
-                    while (stopTimer == false)
+                    try
                     {
-                        lS.Show();
-                        lS.Update();
-                        ReportViewer rViewer = new ReportViewer { TopMost = true, StartPosition = FormStartPosition.CenterScreen };
-                        rViewer.ReportServerPathName(path);
-                        rViewer.Show();
-                        stopTimer = true;
+                        while (stopTimer == false)
+                        {
+                            lS.Show();
+                            lS.Update();
+                            ReportViewer rViewer = new ReportViewer
+                                                       {
+                                                           TopMost = true,
+                                                           StartPosition = FormStartPosition.CenterScreen
+                                                       };
+                            rViewer.ReportServerPathName(path);
+                            rViewer.Show();
+                            stopTimer = true;
+                        }
+                    }
+                catch (FileNotFoundException fex)
+                {
+                    MessageBox.Show(
+                        $"Pre-requisite files are not found. Please ensure Report Viewer 2012 is installed\n\n{fex.Message}");
+                }
+                catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error loading reports.\n\n{ex.Message}");
                     }
                 }
                 else
@@ -433,5 +465,7 @@
         {
             this.StatusStripLabel.Text = message;
         }
+
+
     }
 }

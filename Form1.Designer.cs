@@ -38,9 +38,6 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reportsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.customerLedgerByGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.invoicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ledgerByMaintenanceTypeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ledgerSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.invoicesPostedToPAndLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.configurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nominalCodeEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -77,6 +74,7 @@
             this.gpBrowseForSheetBtn = new System.Windows.Forms.Button();
             this.TabControl1 = new System.Windows.Forms.TabControl();
             this.gpExcelFileFind = new System.Windows.Forms.OpenFileDialog();
+            this.customerStatementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StatusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.TabSage.SuspendLayout();
@@ -144,10 +142,8 @@
             // 
             this.reportsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.customerLedgerByGroupToolStripMenuItem,
-            this.invoicesToolStripMenuItem,
-            this.ledgerByMaintenanceTypeToolStripMenuItem,
-            this.ledgerSummaryToolStripMenuItem,
-            this.invoicesPostedToPAndLToolStripMenuItem});
+            this.invoicesPostedToPAndLToolStripMenuItem,
+            this.customerStatementToolStripMenuItem});
             this.reportsToolStripMenuItem.Name = "reportsToolStripMenuItem";
             this.reportsToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
             this.reportsToolStripMenuItem.Text = "Reports";
@@ -155,35 +151,14 @@
             // customerLedgerByGroupToolStripMenuItem
             // 
             this.customerLedgerByGroupToolStripMenuItem.Name = "customerLedgerByGroupToolStripMenuItem";
-            this.customerLedgerByGroupToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.customerLedgerByGroupToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
             this.customerLedgerByGroupToolStripMenuItem.Text = "Customer Ledger by Group";
             this.customerLedgerByGroupToolStripMenuItem.Click += new System.EventHandler(this.customerLedgerByGroupToolStripMenuItem_Click);
-            // 
-            // invoicesToolStripMenuItem
-            // 
-            this.invoicesToolStripMenuItem.Name = "invoicesToolStripMenuItem";
-            this.invoicesToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
-            this.invoicesToolStripMenuItem.Text = "Invoices";
-            this.invoicesToolStripMenuItem.Click += new System.EventHandler(this.invoicesToolStripMenuItem_Click);
-            // 
-            // ledgerByMaintenanceTypeToolStripMenuItem
-            // 
-            this.ledgerByMaintenanceTypeToolStripMenuItem.Name = "ledgerByMaintenanceTypeToolStripMenuItem";
-            this.ledgerByMaintenanceTypeToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
-            this.ledgerByMaintenanceTypeToolStripMenuItem.Text = "Ledger by Maintenance Type";
-            this.ledgerByMaintenanceTypeToolStripMenuItem.Click += new System.EventHandler(this.ledgerByMaintenanceTypeToolStripMenuItem_Click);
-            // 
-            // ledgerSummaryToolStripMenuItem
-            // 
-            this.ledgerSummaryToolStripMenuItem.Name = "ledgerSummaryToolStripMenuItem";
-            this.ledgerSummaryToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
-            this.ledgerSummaryToolStripMenuItem.Text = "Ledger Summary";
-            this.ledgerSummaryToolStripMenuItem.Click += new System.EventHandler(this.ledgerSummaryToolStripMenuItem_Click);
             // 
             // invoicesPostedToPAndLToolStripMenuItem
             // 
             this.invoicesPostedToPAndLToolStripMenuItem.Name = "invoicesPostedToPAndLToolStripMenuItem";
-            this.invoicesPostedToPAndLToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.invoicesPostedToPAndLToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
             this.invoicesPostedToPAndLToolStripMenuItem.Text = "Invoices Posted to P and L";
             this.invoicesPostedToPAndLToolStripMenuItem.Click += new System.EventHandler(this.invoicesPostedToPAndLToolStripMenuItem_Click);
             // 
@@ -428,8 +403,8 @@
             this.gpImportTypeCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.gpImportTypeCombo.FormattingEnabled = true;
             this.gpImportTypeCombo.Items.AddRange(new object[] {
-            "Invoice",
-            "Invoices Posted to P+L",
+            "Invoice (EPOS AR)",
+            "Invoices Posted to P+L (CSS DOWNLOAD)",
             "Outstanding Invoices"});
             this.gpImportTypeCombo.Location = new System.Drawing.Point(132, 11);
             this.gpImportTypeCombo.MaxLength = 6;
@@ -539,6 +514,13 @@
             this.gpExcelFileFind.FileName = "OpenFileDialog1";
             this.gpExcelFileFind.FileOk += new System.ComponentModel.CancelEventHandler(this.GpExcelFileFindFileOk);
             // 
+            // customerStatementToolStripMenuItem
+            // 
+            this.customerStatementToolStripMenuItem.Name = "customerStatementToolStripMenuItem";
+            this.customerStatementToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.customerStatementToolStripMenuItem.Text = "Customer Statement";
+            this.customerStatementToolStripMenuItem.Click += new System.EventHandler(this.customerStatementToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -613,11 +595,9 @@
         private System.Windows.Forms.Label lblRemoveWarning;
         private System.Windows.Forms.ToolStripMenuItem reportsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem customerLedgerByGroupToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem invoicesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ledgerByMaintenanceTypeToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ledgerSummaryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem invoicesPostedToPAndLToolStripMenuItem;
         public System.Windows.Forms.StatusStrip StatusStrip1;
+        private System.Windows.Forms.ToolStripMenuItem customerStatementToolStripMenuItem;
     }
 }
 
