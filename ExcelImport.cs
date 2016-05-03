@@ -7,6 +7,8 @@ using System.Windows.Forms;
 
 namespace SageImporterLibrary
 {
+    using System.Reflection;
+
     public class ExcelImport
     {
         private static int columnSize = 16;
@@ -21,14 +23,11 @@ namespace SageImporterLibrary
 
         public static OpenFileDialog ExcelDialogBox(OpenFileDialog excelFileFind)
         {
-
-            excelFileFind.Title = "Please Select a File";
+            excelFileFind.Title = @"Please Select a File";
             excelFileFind.FileName = "";
             excelFileFind.ValidateNames = true;
-            excelFileFind.Filter = "Excel Worksheets|*.xls;*.xlsx";
+            excelFileFind.Filter = @"Excel Worksheets|*.xls;*.xlsx";
             excelFileFind.FilterIndex = 1;
-            //dialogDescription.InitialDirectory = Form1.ExcelFileFind.RestoreDirectory;
-
 
             return excelFileFind;
 
@@ -47,7 +46,6 @@ namespace SageImporterLibrary
             catch (System.IO.IOException ioex)
             {
                 MessageBox.Show($"File is being used elsewhere. Please close the file and try again. \n {ioex.Message}");
-                //not working or required?  excelFileFind.InitialDirectory = excelFileFind.RestoreDirectory;
             }
             catch (Exception ex)
             {
@@ -60,7 +58,7 @@ namespace SageImporterLibrary
 
             if (officeType == null)
             {
-                MessageBox.Show("Excel is not installed. Please install Excel and try again.");
+                MessageBox.Show(@"Excel is not installed. Please install Excel and try again.");
             }
             else
             {
@@ -75,7 +73,7 @@ namespace SageImporterLibrary
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show($"Unable to open Excel document. \n \n + {ex.Message}", "Error");
+                        MessageBox.Show($"Unable to open Excel document. \n \n + {ex.Message}", @"Error");
                         if (oXL == null)
                         {
                             oXL.Quit();
@@ -115,11 +113,7 @@ namespace SageImporterLibrary
 
             excelGridView.DataSource = tableBindingSource;
             return tableBindingSource;
-
-
         }
-
-
 
         private static System.Data.OleDb.OleDbDataAdapter GetDataAdapter(string selectCommand, TextBox directoryBox)
         {
@@ -225,14 +219,8 @@ namespace SageImporterLibrary
 
         public static DataTable GetData(string selectCommand, TextBox directoryBox)
         {
-
-            System.Data.OleDb.OleDbDataAdapter dAdapter = new OleDbDataAdapter();
-            DataTable internalTable = new DataTable();
-
-
-
-            dAdapter = GetDataAdapter(selectCommand, directoryBox);
-            internalTable = FillDataTable(dAdapter);
+            OleDbDataAdapter dAdapter = GetDataAdapter(selectCommand, directoryBox);
+            DataTable internalTable = FillDataTable(dAdapter);
             internalTable = TableValidation(internalTable);
             internalTable = RemoveExcessColumns(internalTable);
 
