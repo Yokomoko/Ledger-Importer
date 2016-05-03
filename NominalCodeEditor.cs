@@ -44,18 +44,7 @@ namespace Jonas_Sage_Importer
 
         private void NominalCodeEditor_Load(object sender, EventArgs e)
         {
-            /*this.sql = "Select GLNo as NominalCode, GLDescription as NominalDescription from GlTypes";
-            using (SqlConnection sqlconn = new SqlConnection(this.connectionString))
-            {
-                using (SqlCommand sqlcomm = new SqlCommand(this.sql, sqlconn))
-                {
-                    sqlconn.Open();
-                    this.adapter = new SqlDataAdapter(this.sql, sqlconn);
-                    this.adapter.Fill(this.ds);
-                    this.nominalCodesGridView.DataSource = this.ds.Tables[0];
-                }
-            }
-            */
+
             this.dbConnections.GetNominalCodeAdapter().Fill(this.ds);
             this.nominalCodesGridView.DataSource = this.ds.Tables[0];
             
@@ -68,19 +57,22 @@ namespace Jonas_Sage_Importer
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             // this.bindingSource.Filter = $"convert(NominalCode,'System.String') like '%{this.textBox1.Text.ToString()}%' OR convert(Description,'System.String') like '%{this.textBox1.Text.ToString()}%'";
-            string rowFilter = string.Format("Convert([{0}],'System.String') like '%{1}%'", "NominalCode", this.textBox1.Text);
-            rowFilter += string.Format("OR [{0}] like '%{1}%'", "Description", this.textBox1.Text);
+            string rowFilter = $"Convert([{"NominalCode"}],'System.String') like '%{this.textBox1.Text}%'";
+            rowFilter += $"OR [{"Description"}] like '%{this.textBox1.Text}%'";
 
-            (this.nominalCodesGridView.DataSource as DataTable).DefaultView.RowFilter = rowFilter;
-
+            DataTable dataTable = this.nominalCodesGridView.DataSource as DataTable;
+            if (dataTable != null)
+            {
+                dataTable.DefaultView.RowFilter = rowFilter;
+            }
         }
 
-         private void exitBtn_Click(object sender, EventArgs e)
+         private void ExitBtnClick(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void addNominalCodeBtn_Click(object sender, EventArgs e)
+        private void AddNominalCodeBtnClick(object sender, EventArgs e)
         {
             this.nCode = this.nominalCodeTxtBox.Text;
             this.nDesc = this.nominalDescriptionTxtBox.Text;
@@ -100,7 +92,7 @@ namespace Jonas_Sage_Importer
                     newRow["NominalCode"] = Int32.Parse(this.nCode);
                     newRow["Description"] = this.nDesc;
 
-                    ds.Tables[0].Rows.Add(newRow);
+                    this.ds.Tables[0].Rows.Add(newRow);
                     this.nominalCodeTxtBox.Text = "";
                     this.nominalDescriptionTxtBox.Text = "";
 
@@ -130,9 +122,6 @@ namespace Jonas_Sage_Importer
             }
         }
 
-        private void nominalDescriptionTxtBox_TextChanged(object sender, EventArgs e)
-        {
-        }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
@@ -149,14 +138,10 @@ namespace Jonas_Sage_Importer
                     this.nominalCodesGridView.Rows.RemoveAt(this.nominalCodesGridView.SelectedRows[0].Index);
                 }
             }
-
-            
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            SqlConnection sqConn = new SqlConnection(this.connectionString);
-
             try
             {
                 this.changes = this.ds.GetChanges();
@@ -183,14 +168,5 @@ namespace Jonas_Sage_Importer
             this.nominalCodesGridView.Refresh();
         }
 
-        private void nominalCodeTxtBox_KeyPress(object sender, KeyEventArgs e)
-        {
-            
-        }
-
-        private void nominalCodesGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
     }
 }

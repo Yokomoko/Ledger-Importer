@@ -216,7 +216,6 @@ namespace Jonas_Sage_Importer
             }
             catch (Exception)
             {
-                
                 throw;
             }
         }

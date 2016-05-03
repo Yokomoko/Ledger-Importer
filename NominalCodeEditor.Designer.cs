@@ -13,9 +13,9 @@
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing && (this.components != null))
             {
-                components.Dispose();
+                this.components.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -66,7 +66,6 @@
             this.nominalCodesGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.nominalCodesGridView.Size = new System.Drawing.Size(271, 282);
             this.nominalCodesGridView.TabIndex = 0;
-            this.nominalCodesGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.nominalCodesGridView_CellContentClick);
             // 
             // lblFilter
             // 
@@ -93,7 +92,7 @@
             this.exitBtn.TabIndex = 5;
             this.exitBtn.Text = "Close";
             this.exitBtn.UseVisualStyleBackColor = true;
-            this.exitBtn.Click += new System.EventHandler(this.exitBtn_Click);
+            this.exitBtn.Click += new System.EventHandler(this.ExitBtnClick);
             // 
             // nominalCodeLbl
             // 
@@ -127,7 +126,6 @@
             this.nominalDescriptionTxtBox.Name = "nominalDescriptionTxtBox";
             this.nominalDescriptionTxtBox.Size = new System.Drawing.Size(211, 20);
             this.nominalDescriptionTxtBox.TabIndex = 9;
-            this.nominalDescriptionTxtBox.TextChanged += new System.EventHandler(this.nominalDescriptionTxtBox_TextChanged);
             // 
             // addNominalCodeBtn
             // 
@@ -137,7 +135,7 @@
             this.addNominalCodeBtn.TabIndex = 10;
             this.addNominalCodeBtn.Text = "Add";
             this.addNominalCodeBtn.UseVisualStyleBackColor = true;
-            this.addNominalCodeBtn.Click += new System.EventHandler(this.addNominalCodeBtn_Click);
+            this.addNominalCodeBtn.Click += new System.EventHandler(this.AddNominalCodeBtnClick);
             // 
             // groupBox1
             // 
