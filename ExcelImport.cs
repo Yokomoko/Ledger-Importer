@@ -63,7 +63,7 @@ namespace SageImporterLibrary
             else
             {
                 Excel.Application oXL = null;
-
+                oXL.DisplayAlerts = false;
                 try
                 {
                     strm?.Close();
