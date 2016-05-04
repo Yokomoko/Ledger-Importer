@@ -331,7 +331,7 @@
         {
             //ReportViewer rViewer = new ReportViewer {TopMost = true};
 
-            this.CreateNewReportWindow(@"/Customer Ledger by Group");
+            this.CreateNewReportWindow(@"/Sales Backlog and Raised Invoices");
         }
 
 
