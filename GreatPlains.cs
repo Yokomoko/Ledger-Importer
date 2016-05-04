@@ -68,6 +68,7 @@ namespace Jonas_Sage_Importer
                     tempProcedureName = "GP_Temp_ImportPostedInvoices";
                     break;
                 case 2:
+                    DeleteHistoricalLedger(comboBox.SelectedIndex, new DateTime(1900,01,01));;
                     gridProcedureName = "GP_Grid_ImportOutstandingInvoices";
                     tempProcedureName = "GP_Temp_ImportOutstandingInvoices";
                     break;

@@ -7,11 +7,12 @@ using System.Windows.Forms;
 
 namespace SageImporterLibrary
 {
+    using System.Globalization;
     using System.Reflection;
 
     public class ExcelImport
     {
-        private static int columnSize = 16;
+        private static int columnSize = 17;
         //private static bool populateSuccess;
 
         public static int ColumnSize()
@@ -26,7 +27,7 @@ namespace SageImporterLibrary
             excelFileFind.Title = @"Please Select a File";
             excelFileFind.FileName = "";
             excelFileFind.ValidateNames = true;
-            excelFileFind.Filter = @"Excel Worksheets|*.xls;*.xlsx";
+            excelFileFind.Filter = @"Excel Worksheets|*.xls;*.xlsx;*.csv";
             excelFileFind.FilterIndex = 1;
 
             return excelFileFind;
@@ -63,7 +64,6 @@ namespace SageImporterLibrary
             else
             {
                 Excel.Application oXL = null;
-                oXL.DisplayAlerts = false;
                 try
                 {
                     strm?.Close();
@@ -138,12 +138,11 @@ namespace SageImporterLibrary
 
             try
             {
-
                 dTable.Rows.Clear();
                 adapter.Fill(dTable);
 
                 return dTable;
-            }
+                }
             catch (InvalidOperationException ioexception)
             {
                 MessageBox.Show(
@@ -175,7 +174,7 @@ namespace SageImporterLibrary
                         from DataRow r in dTable.AsEnumerable().Cast<DataRow>()
                         where r.Field<DateTime?>(dTable.Columns[0].ColumnName) < dati
                         select r).ToArray();
-                    var CountRowsExcluded = rows.Length.ToString();
+                    var countRowsExcluded = rows.Length.ToString();
 
                     foreach (DataRow row in rows)
                     {
@@ -183,7 +182,7 @@ namespace SageImporterLibrary
                     }
 
                     MessageBox.Show(
-                        $"{CountRowsExcluded} were earlier than 01/01/2015 and were automatically removed.");
+                        $"{countRowsExcluded} were earlier than 01/01/2015 and were automatically removed.");
 
                     return dTable;
                 }
@@ -197,34 +196,67 @@ namespace SageImporterLibrary
 
         private static DataTable RemoveExcessColumns(DataTable dTable)
         {
-            int ColumnSize = 17;
             int originalSize = dTable.Columns.Count;
-
-
-            if (originalSize > ColumnSize)
+            if (originalSize == 41)
             {
-                MessageBox.Show($"There were {ColumnSize} columns expected but there were actually {originalSize}." +
-                                $"Extra columns will be automatically removed. \n Please ensure that you have selected " +
+                MessageBox.Show($"The application has detected {originalSize} in this spreadsheet.\n8 Columns will automatically be trimmed from the beginning and 16 from the end in order to comply with import standards.");
+                for (int i = 0; i < 8; i++)
+                {
+                    dTable.Columns.RemoveAt(0);
+                }
+                while (dTable.Columns.Count > columnSize)
+                {
+                    dTable.Columns.RemoveAt(columnSize);
+                }
+
+                DataTable dTableClone = dTable.Clone();
+                dTableClone.Columns[4].DataType = typeof(string);
+                dTableClone.Columns[6].DataType = typeof(string);
+                dTableClone.Columns[7].DataType = typeof(string);
+                foreach (DataRow row in dTable.Rows)
+                {
+                    dTableClone.ImportRow(row);
+                }
+
+                return dTableClone;
+
+            }
+            else if (columnSize > originalSize)
+            {
+                MessageBox.Show($"There were {columnSize} columns expected but there were actually {originalSize}." +
+                                $"Extra columns will be automatically removed from the end.\n Please ensure that you have selected " +
                                 $"the correct spreadsheet.");
                 while (dTable.Columns.Count > columnSize)
                 {
                     dTable.Columns.RemoveAt(columnSize);
                 }
+                
             }
-
             return dTable;
-
         }
 
+        public static string FormatDate(string input, string goalFormat, string[] formats)
+        {
+            var c = CultureInfo.CurrentCulture;
+            var s = DateTimeStyles.None;
+            var result = default(DateTime);
+
+            if (DateTime.TryParseExact(input, formats, c, s, out result))
+                return result.ToString(goalFormat);
+
+            throw new FormatException("Unhandled input format: " + input);
+        }
 
         public static DataTable GetData(string selectCommand, TextBox directoryBox)
         {
             OleDbDataAdapter dAdapter = GetDataAdapter(selectCommand, directoryBox);
             DataTable internalTable = FillDataTable(dAdapter);
-            internalTable = TableValidation(internalTable);
+            //internalTable = TableValidation(internalTable);
             internalTable = RemoveExcessColumns(internalTable);
+            //DataTable intTestTable = internalTable;
 
             return internalTable;
+            //return internalTable;
         }
 
     }

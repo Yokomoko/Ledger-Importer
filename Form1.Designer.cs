@@ -273,6 +273,7 @@
             this.UpdateBtn.TabIndex = 12;
             this.UpdateBtn.Text = "Update";
             this.UpdateBtn.UseVisualStyleBackColor = true;
+            this.UpdateBtn.Click += new System.EventHandler(this.UpdateBtn_Click);
             // 
             // ExcelGridView
             // 
@@ -436,6 +437,7 @@
             this.gpUpdateDataGridBtn.TabIndex = 22;
             this.gpUpdateDataGridBtn.Text = "Update";
             this.gpUpdateDataGridBtn.UseVisualStyleBackColor = true;
+            this.gpUpdateDataGridBtn.Click += new System.EventHandler(this.gpUpdateDataGridBtn_Click);
             // 
             // gpExcelGridView
             // 

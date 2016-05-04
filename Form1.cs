@@ -466,6 +466,17 @@
             this.StatusStripLabel.Text = message;
         }
 
+        private void UpdateBtn_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void gpUpdateDataGridBtn_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
 
     }
 }

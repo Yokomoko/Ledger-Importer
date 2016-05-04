@@ -227,9 +227,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Jonas Importer Tool.ico" />
-    <Content Include="packages\Microsoft.Reporting.WinForms.v11.1.0.0.0\lib\Microsoft.ReportViewer.WinForms.DLL">
+    <None Include="packages\Microsoft.Reporting.WinForms.v11.1.0.0.0\lib\Microsoft.ReportViewer.WinForms.DLL">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </None>
     <Content Include="ReleaseNotes.txt" />
   </ItemGroup>
   <ItemGroup>
