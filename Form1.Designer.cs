@@ -39,6 +39,7 @@
             this.reportsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.customerLedgerByGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.invoicesPostedToPAndLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.customerStatementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.configurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nominalCodeEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.jonasGroupEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -74,7 +75,6 @@
             this.gpBrowseForSheetBtn = new System.Windows.Forms.Button();
             this.TabControl1 = new System.Windows.Forms.TabControl();
             this.gpExcelFileFind = new System.Windows.Forms.OpenFileDialog();
-            this.customerStatementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StatusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.TabSage.SuspendLayout();
@@ -151,16 +151,23 @@
             // customerLedgerByGroupToolStripMenuItem
             // 
             this.customerLedgerByGroupToolStripMenuItem.Name = "customerLedgerByGroupToolStripMenuItem";
-            this.customerLedgerByGroupToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
-            this.customerLedgerByGroupToolStripMenuItem.Text = "Customer Ledger by Group";
+            this.customerLedgerByGroupToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
+            this.customerLedgerByGroupToolStripMenuItem.Text = "Sales Backlog and Raised Invoices";
             this.customerLedgerByGroupToolStripMenuItem.Click += new System.EventHandler(this.customerLedgerByGroupToolStripMenuItem_Click);
             // 
             // invoicesPostedToPAndLToolStripMenuItem
             // 
             this.invoicesPostedToPAndLToolStripMenuItem.Name = "invoicesPostedToPAndLToolStripMenuItem";
-            this.invoicesPostedToPAndLToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            this.invoicesPostedToPAndLToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
             this.invoicesPostedToPAndLToolStripMenuItem.Text = "Invoices Posted to P and L";
             this.invoicesPostedToPAndLToolStripMenuItem.Click += new System.EventHandler(this.invoicesPostedToPAndLToolStripMenuItem_Click);
+            // 
+            // customerStatementToolStripMenuItem
+            // 
+            this.customerStatementToolStripMenuItem.Name = "customerStatementToolStripMenuItem";
+            this.customerStatementToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
+            this.customerStatementToolStripMenuItem.Text = "Customer Statement";
+            this.customerStatementToolStripMenuItem.Click += new System.EventHandler(this.customerStatementToolStripMenuItem_Click);
             // 
             // configurationToolStripMenuItem
             // 
@@ -513,13 +520,6 @@
             // 
             this.gpExcelFileFind.FileName = "OpenFileDialog1";
             this.gpExcelFileFind.FileOk += new System.ComponentModel.CancelEventHandler(this.GpExcelFileFindFileOk);
-            // 
-            // customerStatementToolStripMenuItem
-            // 
-            this.customerStatementToolStripMenuItem.Name = "customerStatementToolStripMenuItem";
-            this.customerStatementToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
-            this.customerStatementToolStripMenuItem.Text = "Customer Statement";
-            this.customerStatementToolStripMenuItem.Click += new System.EventHandler(this.customerStatementToolStripMenuItem_Click);
             // 
             // Form1
             // 
