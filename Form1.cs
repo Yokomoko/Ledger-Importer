@@ -1,29 +1,18 @@
 ﻿namespace Jonas_Sage_Importer
 {
+    using Microsoft.Win32;
+    using SageImporterLibrary;
     using System;
     using System.ComponentModel;
-    using System.Windows;
     using System.Data.OleDb;
     using System.Diagnostics;
-    using System.DirectoryServices.ActiveDirectory;
-    using System.Reflection;
-
-    using SageImporterLibrary;
-
-    using System.Threading;
-    using System.Windows.Forms;
-    using System.Drawing.Text;
     using System.IO;
-    using System.Runtime.Remoting.Channels;
-    using System.Windows.Forms.VisualStyles;
-
-    using Microsoft.Office.Interop.Excel;
-    //using Microsoft.SqlServer.Types;
-    using Microsoft.Win32;
-
+    using System.Reflection;
+    using System.Windows.Forms;
     using Application = System.Windows.Forms.Application;
     using DataTable = System.Data.DataTable;
     using Rectangle = System.Drawing.Rectangle;
+
 
     public partial class Form1 : Form
     {
@@ -37,6 +26,7 @@
         {
             InitializeComponent();
             _form1 = this;
+            
         }
 
 
@@ -51,7 +41,7 @@
             this.StatusStripLabel.Text = @"OK";
             this.TopMost = true;
             //SqlServerTypes.Utilities.LoadNativeAssemblies(AppDomain.CurrentDomain.BaseDirectory);
-
+            
         }
 
 
@@ -472,12 +462,10 @@
 
         }
 
-        private void gpUpdateDataGridBtn_Click(object sender, EventArgs e)
+
+        private void uxMainTb_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
-
-
-
     }
 }

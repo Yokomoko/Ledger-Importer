@@ -49,7 +49,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TabSage = new System.Windows.Forms.TabPage();
             this.ImportTypeCombo = new System.Windows.Forms.ComboBox();
-            this.ImportTypeLbl = new System.Windows.Forms.Label();
+            this.ImportTypeOldLbl = new System.Windows.Forms.Label();
             this.UpdateBtn = new System.Windows.Forms.Button();
             this.ExcelGridView = new System.Windows.Forms.DataGridView();
             this.debuglbl = new System.Windows.Forms.Label();
@@ -73,7 +73,23 @@
             this.dpSelectWorksheetlbl = new System.Windows.Forms.Label();
             this.gpWorksheetCombo = new System.Windows.Forms.ComboBox();
             this.gpBrowseForSheetBtn = new System.Windows.Forms.Button();
-            this.TabControl1 = new System.Windows.Forms.TabControl();
+            this.uxMainTc = new System.Windows.Forms.TabControl();
+            this.uxAllTb = new System.Windows.Forms.TabPage();
+            this.uxImportSourceCmbo = new System.Windows.Forms.ComboBox();
+            this.uxImportSourceLbl = new System.Windows.Forms.Label();
+            this.uxInclusiveLbl = new System.Windows.Forms.Label();
+            this.uxRemoveNewerRecordsDt = new System.Windows.Forms.DateTimePicker();
+            this.uxRemoveNewerRecordsChk = new System.Windows.Forms.CheckBox();
+            this.uxImportTypeCmbo = new System.Windows.Forms.ComboBox();
+            this.uxImportTypeLbl = new System.Windows.Forms.Label();
+            this.uxWorksheetUpdateBtn = new System.Windows.Forms.Button();
+            this.uxExcelSheetViewerGv = new System.Windows.Forms.DataGridView();
+            this.uxImportBtn = new System.Windows.Forms.Button();
+            this.uxExcelSheetLbl = new System.Windows.Forms.Label();
+            this.uxExcelSheetTxt = new System.Windows.Forms.TextBox();
+            this.uxWorksheetLbl = new System.Windows.Forms.Label();
+            this.uxExcelWorksheetCmbo = new System.Windows.Forms.ComboBox();
+            this.uxExcelBrowseBtn = new System.Windows.Forms.Button();
             this.gpExcelFileFind = new System.Windows.Forms.OpenFileDialog();
             this.StatusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -81,14 +97,16 @@
             ((System.ComponentModel.ISupportInitialize)(this.ExcelGridView)).BeginInit();
             this.TabDynamicsGP.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gpExcelGridView)).BeginInit();
-            this.TabControl1.SuspendLayout();
+            this.uxMainTc.SuspendLayout();
+            this.uxAllTb.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.uxExcelSheetViewerGv)).BeginInit();
             this.SuspendLayout();
             // 
             // StatusStrip1
             // 
             this.StatusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusStripLabel});
-            this.StatusStrip1.Location = new System.Drawing.Point(0, 481);
+            this.StatusStrip1.Location = new System.Drawing.Point(0, 504);
             this.StatusStrip1.Name = "StatusStrip1";
             this.StatusStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.StatusStrip1.Size = new System.Drawing.Size(694, 22);
@@ -226,7 +244,7 @@
             // TabSage
             // 
             this.TabSage.Controls.Add(this.ImportTypeCombo);
-            this.TabSage.Controls.Add(this.ImportTypeLbl);
+            this.TabSage.Controls.Add(this.ImportTypeOldLbl);
             this.TabSage.Controls.Add(this.UpdateBtn);
             this.TabSage.Controls.Add(this.ExcelGridView);
             this.TabSage.Controls.Add(this.debuglbl);
@@ -239,7 +257,7 @@
             this.TabSage.Location = new System.Drawing.Point(4, 22);
             this.TabSage.Name = "TabSage";
             this.TabSage.Padding = new System.Windows.Forms.Padding(3);
-            this.TabSage.Size = new System.Drawing.Size(690, 422);
+            this.TabSage.Size = new System.Drawing.Size(690, 450);
             this.TabSage.TabIndex = 0;
             this.TabSage.Text = "Sage";
             this.TabSage.UseVisualStyleBackColor = true;
@@ -256,14 +274,14 @@
             this.ImportTypeCombo.Size = new System.Drawing.Size(240, 21);
             this.ImportTypeCombo.TabIndex = 14;
             // 
-            // ImportTypeLbl
+            // ImportTypeOldLbl
             // 
-            this.ImportTypeLbl.AutoSize = true;
-            this.ImportTypeLbl.Location = new System.Drawing.Point(61, 15);
-            this.ImportTypeLbl.Name = "ImportTypeLbl";
-            this.ImportTypeLbl.Size = new System.Drawing.Size(63, 13);
-            this.ImportTypeLbl.TabIndex = 13;
-            this.ImportTypeLbl.Text = "Import Type";
+            this.ImportTypeOldLbl.AutoSize = true;
+            this.ImportTypeOldLbl.Location = new System.Drawing.Point(61, 15);
+            this.ImportTypeOldLbl.Name = "ImportTypeOldLbl";
+            this.ImportTypeOldLbl.Size = new System.Drawing.Size(63, 13);
+            this.ImportTypeOldLbl.TabIndex = 13;
+            this.ImportTypeOldLbl.Text = "Import Type";
             // 
             // UpdateBtn
             // 
@@ -370,7 +388,7 @@
             this.TabDynamicsGP.Location = new System.Drawing.Point(4, 22);
             this.TabDynamicsGP.Margin = new System.Windows.Forms.Padding(2);
             this.TabDynamicsGP.Name = "TabDynamicsGP";
-            this.TabDynamicsGP.Size = new System.Drawing.Size(690, 422);
+            this.TabDynamicsGP.Size = new System.Drawing.Size(690, 450);
             this.TabDynamicsGP.TabIndex = 3;
             this.TabDynamicsGP.Text = "Microsoft Dynamics GP";
             this.TabDynamicsGP.UseVisualStyleBackColor = true;
@@ -437,7 +455,6 @@
             this.gpUpdateDataGridBtn.TabIndex = 22;
             this.gpUpdateDataGridBtn.Text = "Update";
             this.gpUpdateDataGridBtn.UseVisualStyleBackColor = true;
-            this.gpUpdateDataGridBtn.Click += new System.EventHandler(this.gpUpdateDataGridBtn_Click);
             // 
             // gpExcelGridView
             // 
@@ -508,15 +525,193 @@
             this.gpBrowseForSheetBtn.UseVisualStyleBackColor = true;
             this.gpBrowseForSheetBtn.Click += new System.EventHandler(this.GpBrowseForSheetBtnClick);
             // 
-            // TabControl1
+            // uxMainTc
             // 
-            this.TabControl1.Controls.Add(this.TabDynamicsGP);
-            this.TabControl1.Controls.Add(this.TabSage);
-            this.TabControl1.Location = new System.Drawing.Point(-2, 30);
-            this.TabControl1.Name = "TabControl1";
-            this.TabControl1.SelectedIndex = 0;
-            this.TabControl1.Size = new System.Drawing.Size(698, 448);
-            this.TabControl1.TabIndex = 27;
+            this.uxMainTc.Controls.Add(this.uxAllTb);
+            this.uxMainTc.Controls.Add(this.TabDynamicsGP);
+            this.uxMainTc.Controls.Add(this.TabSage);
+            this.uxMainTc.Location = new System.Drawing.Point(-2, 32);
+            this.uxMainTc.Name = "uxMainTc";
+            this.uxMainTc.SelectedIndex = 0;
+            this.uxMainTc.Size = new System.Drawing.Size(698, 476);
+            this.uxMainTc.TabIndex = 27;
+            this.uxMainTc.SelectedIndexChanged += new System.EventHandler(this.uxMainTb_SelectedIndexChanged);
+            // 
+            // uxAllTb
+            // 
+            this.uxAllTb.Controls.Add(this.uxImportSourceCmbo);
+            this.uxAllTb.Controls.Add(this.uxImportSourceLbl);
+            this.uxAllTb.Controls.Add(this.uxInclusiveLbl);
+            this.uxAllTb.Controls.Add(this.uxRemoveNewerRecordsDt);
+            this.uxAllTb.Controls.Add(this.uxRemoveNewerRecordsChk);
+            this.uxAllTb.Controls.Add(this.uxImportTypeCmbo);
+            this.uxAllTb.Controls.Add(this.uxImportTypeLbl);
+            this.uxAllTb.Controls.Add(this.uxWorksheetUpdateBtn);
+            this.uxAllTb.Controls.Add(this.uxExcelSheetViewerGv);
+            this.uxAllTb.Controls.Add(this.uxImportBtn);
+            this.uxAllTb.Controls.Add(this.uxExcelSheetLbl);
+            this.uxAllTb.Controls.Add(this.uxExcelSheetTxt);
+            this.uxAllTb.Controls.Add(this.uxWorksheetLbl);
+            this.uxAllTb.Controls.Add(this.uxExcelWorksheetCmbo);
+            this.uxAllTb.Controls.Add(this.uxExcelBrowseBtn);
+            this.uxAllTb.Location = new System.Drawing.Point(4, 22);
+            this.uxAllTb.Name = "uxAllTb";
+            this.uxAllTb.Size = new System.Drawing.Size(690, 450);
+            this.uxAllTb.TabIndex = 4;
+            this.uxAllTb.Text = "All";
+            this.uxAllTb.UseVisualStyleBackColor = true;
+            // 
+            // uxImportSourceCmbo
+            // 
+            this.uxImportSourceCmbo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.uxImportSourceCmbo.FormattingEnabled = true;
+            this.uxImportSourceCmbo.Items.AddRange(new object[] {
+            "Invoice (EPOS AR)",
+            "Invoices Posted to P+L (CSS DOWNLOAD)",
+            "Outstanding Invoices"});
+            this.uxImportSourceCmbo.Location = new System.Drawing.Point(132, 12);
+            this.uxImportSourceCmbo.MaxLength = 6;
+            this.uxImportSourceCmbo.Name = "uxImportSourceCmbo";
+            this.uxImportSourceCmbo.Size = new System.Drawing.Size(240, 21);
+            this.uxImportSourceCmbo.TabIndex = 43;
+            // 
+            // uxImportSourceLbl
+            // 
+            this.uxImportSourceLbl.AutoSize = true;
+            this.uxImportSourceLbl.Location = new System.Drawing.Point(55, 15);
+            this.uxImportSourceLbl.Name = "uxImportSourceLbl";
+            this.uxImportSourceLbl.Size = new System.Drawing.Size(73, 13);
+            this.uxImportSourceLbl.TabIndex = 42;
+            this.uxImportSourceLbl.Text = "Import Source";
+            // 
+            // uxInclusiveLbl
+            // 
+            this.uxInclusiveLbl.AutoSize = true;
+            this.uxInclusiveLbl.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.uxInclusiveLbl.Location = new System.Drawing.Point(377, 140);
+            this.uxInclusiveLbl.Name = "uxInclusiveLbl";
+            this.uxInclusiveLbl.Size = new System.Drawing.Size(137, 13);
+            this.uxInclusiveLbl.TabIndex = 41;
+            this.uxInclusiveLbl.Text = "Note: This date is inclusive.";
+            // 
+            // uxRemoveNewerRecordsDt
+            // 
+            this.uxRemoveNewerRecordsDt.Enabled = false;
+            this.uxRemoveNewerRecordsDt.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.uxRemoveNewerRecordsDt.Location = new System.Drawing.Point(132, 136);
+            this.uxRemoveNewerRecordsDt.Name = "uxRemoveNewerRecordsDt";
+            this.uxRemoveNewerRecordsDt.Size = new System.Drawing.Size(239, 20);
+            this.uxRemoveNewerRecordsDt.TabIndex = 39;
+            this.uxRemoveNewerRecordsDt.Value = new System.DateTime(2016, 4, 21, 0, 0, 0, 0);
+            // 
+            // uxRemoveNewerRecordsChk
+            // 
+            this.uxRemoveNewerRecordsChk.AutoSize = true;
+            this.uxRemoveNewerRecordsChk.Location = new System.Drawing.Point(7, 138);
+            this.uxRemoveNewerRecordsChk.Name = "uxRemoveNewerRecordsChk";
+            this.uxRemoveNewerRecordsChk.Size = new System.Drawing.Size(128, 17);
+            this.uxRemoveNewerRecordsChk.TabIndex = 40;
+            this.uxRemoveNewerRecordsChk.Text = "Remove Newer Than";
+            this.uxRemoveNewerRecordsChk.UseVisualStyleBackColor = true;
+            // 
+            // uxImportTypeCmbo
+            // 
+            this.uxImportTypeCmbo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.uxImportTypeCmbo.FormattingEnabled = true;
+            this.uxImportTypeCmbo.Items.AddRange(new object[] {
+            "Invoice (EPOS AR)",
+            "Invoices Posted to P+L (CSS DOWNLOAD)",
+            "Outstanding Invoices"});
+            this.uxImportTypeCmbo.Location = new System.Drawing.Point(132, 41);
+            this.uxImportTypeCmbo.MaxLength = 6;
+            this.uxImportTypeCmbo.Name = "uxImportTypeCmbo";
+            this.uxImportTypeCmbo.Size = new System.Drawing.Size(240, 21);
+            this.uxImportTypeCmbo.TabIndex = 38;
+            // 
+            // uxImportTypeLbl
+            // 
+            this.uxImportTypeLbl.AutoSize = true;
+            this.uxImportTypeLbl.Location = new System.Drawing.Point(65, 44);
+            this.uxImportTypeLbl.Name = "uxImportTypeLbl";
+            this.uxImportTypeLbl.Size = new System.Drawing.Size(63, 13);
+            this.uxImportTypeLbl.TabIndex = 37;
+            this.uxImportTypeLbl.Text = "Import Type";
+            // 
+            // uxWorksheetUpdateBtn
+            // 
+            this.uxWorksheetUpdateBtn.Location = new System.Drawing.Point(392, 102);
+            this.uxWorksheetUpdateBtn.Name = "uxWorksheetUpdateBtn";
+            this.uxWorksheetUpdateBtn.Size = new System.Drawing.Size(112, 23);
+            this.uxWorksheetUpdateBtn.TabIndex = 36;
+            this.uxWorksheetUpdateBtn.Text = "Update";
+            this.uxWorksheetUpdateBtn.UseVisualStyleBackColor = true;
+            // 
+            // uxExcelSheetViewerGv
+            // 
+            this.uxExcelSheetViewerGv.AllowUserToAddRows = false;
+            this.uxExcelSheetViewerGv.AllowUserToDeleteRows = false;
+            this.uxExcelSheetViewerGv.AllowUserToResizeRows = false;
+            this.uxExcelSheetViewerGv.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.uxExcelSheetViewerGv.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.uxExcelSheetViewerGv.Location = new System.Drawing.Point(4, 173);
+            this.uxExcelSheetViewerGv.Name = "uxExcelSheetViewerGv";
+            this.uxExcelSheetViewerGv.ReadOnly = true;
+            this.uxExcelSheetViewerGv.RowHeadersVisible = false;
+            this.uxExcelSheetViewerGv.Size = new System.Drawing.Size(682, 219);
+            this.uxExcelSheetViewerGv.TabIndex = 35;
+            // 
+            // uxImportBtn
+            // 
+            this.uxImportBtn.Location = new System.Drawing.Point(294, 400);
+            this.uxImportBtn.Name = "uxImportBtn";
+            this.uxImportBtn.Size = new System.Drawing.Size(93, 40);
+            this.uxImportBtn.TabIndex = 29;
+            this.uxImportBtn.Text = "Import File";
+            this.uxImportBtn.UseVisualStyleBackColor = true;
+            // 
+            // uxExcelSheetLbl
+            // 
+            this.uxExcelSheetLbl.AutoSize = true;
+            this.uxExcelSheetLbl.Location = new System.Drawing.Point(16, 76);
+            this.uxExcelSheetLbl.Name = "uxExcelSheetLbl";
+            this.uxExcelSheetLbl.Size = new System.Drawing.Size(112, 13);
+            this.uxExcelSheetLbl.TabIndex = 33;
+            this.uxExcelSheetLbl.Text = "Select an Excel Sheet";
+            // 
+            // uxExcelSheetTxt
+            // 
+            this.uxExcelSheetTxt.Location = new System.Drawing.Point(132, 72);
+            this.uxExcelSheetTxt.Name = "uxExcelSheetTxt";
+            this.uxExcelSheetTxt.ReadOnly = true;
+            this.uxExcelSheetTxt.Size = new System.Drawing.Size(240, 20);
+            this.uxExcelSheetTxt.TabIndex = 31;
+            // 
+            // uxWorksheetLbl
+            // 
+            this.uxWorksheetLbl.AutoSize = true;
+            this.uxWorksheetLbl.Location = new System.Drawing.Point(26, 106);
+            this.uxWorksheetLbl.Name = "uxWorksheetLbl";
+            this.uxWorksheetLbl.Size = new System.Drawing.Size(101, 13);
+            this.uxWorksheetLbl.TabIndex = 34;
+            this.uxWorksheetLbl.Text = "Select a Worksheet";
+            // 
+            // uxExcelWorksheetCmbo
+            // 
+            this.uxExcelWorksheetCmbo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.uxExcelWorksheetCmbo.FormattingEnabled = true;
+            this.uxExcelWorksheetCmbo.Location = new System.Drawing.Point(132, 102);
+            this.uxExcelWorksheetCmbo.Name = "uxExcelWorksheetCmbo";
+            this.uxExcelWorksheetCmbo.Size = new System.Drawing.Size(240, 21);
+            this.uxExcelWorksheetCmbo.TabIndex = 32;
+            // 
+            // uxExcelBrowseBtn
+            // 
+            this.uxExcelBrowseBtn.Location = new System.Drawing.Point(392, 72);
+            this.uxExcelBrowseBtn.Name = "uxExcelBrowseBtn";
+            this.uxExcelBrowseBtn.Size = new System.Drawing.Size(112, 23);
+            this.uxExcelBrowseBtn.TabIndex = 30;
+            this.uxExcelBrowseBtn.Text = "Browse";
+            this.uxExcelBrowseBtn.UseVisualStyleBackColor = true;
             // 
             // gpExcelFileFind
             // 
@@ -527,10 +722,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(694, 503);
+            this.ClientSize = new System.Drawing.Size(694, 526);
             this.Controls.Add(this.StatusStrip1);
             this.Controls.Add(this.menuStrip1);
-            this.Controls.Add(this.TabControl1);
+            this.Controls.Add(this.uxMainTc);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(2);
@@ -547,7 +742,10 @@
             this.TabDynamicsGP.ResumeLayout(false);
             this.TabDynamicsGP.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gpExcelGridView)).EndInit();
-            this.TabControl1.ResumeLayout(false);
+            this.uxMainTc.ResumeLayout(false);
+            this.uxAllTb.ResumeLayout(false);
+            this.uxAllTb.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.uxExcelSheetViewerGv)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -569,7 +767,7 @@
         private System.Windows.Forms.ToolStripMenuItem connectionSettingsToolStripMenuItem;
         internal System.Windows.Forms.TabPage TabSage;
         internal System.Windows.Forms.ComboBox ImportTypeCombo;
-        internal System.Windows.Forms.Label ImportTypeLbl;
+        internal System.Windows.Forms.Label ImportTypeOldLbl;
         internal System.Windows.Forms.Button UpdateBtn;
         internal System.Windows.Forms.DataGridView ExcelGridView;
         internal System.Windows.Forms.Label debuglbl;
@@ -590,7 +788,7 @@
         internal System.Windows.Forms.Label dpSelectWorksheetlbl;
         internal System.Windows.Forms.ComboBox gpWorksheetCombo;
         internal System.Windows.Forms.Button gpBrowseForSheetBtn;
-        internal System.Windows.Forms.TabControl TabControl1;
+        internal System.Windows.Forms.TabControl uxMainTc;
         internal System.Windows.Forms.OpenFileDialog gpExcelFileFind;
         private System.Windows.Forms.CheckBox chkBoxRemoveNewerThan;
         private System.Windows.Forms.DateTimePicker dTRemoveNewerThan;
@@ -600,6 +798,22 @@
         private System.Windows.Forms.ToolStripMenuItem invoicesPostedToPAndLToolStripMenuItem;
         public System.Windows.Forms.StatusStrip StatusStrip1;
         private System.Windows.Forms.ToolStripMenuItem customerStatementToolStripMenuItem;
+        private System.Windows.Forms.TabPage uxAllTb;
+        internal System.Windows.Forms.ComboBox uxImportSourceCmbo;
+        internal System.Windows.Forms.Label uxImportSourceLbl;
+        private System.Windows.Forms.Label uxInclusiveLbl;
+        private System.Windows.Forms.DateTimePicker uxRemoveNewerRecordsDt;
+        private System.Windows.Forms.CheckBox uxRemoveNewerRecordsChk;
+        internal System.Windows.Forms.ComboBox uxImportTypeCmbo;
+        internal System.Windows.Forms.Label uxImportTypeLbl;
+        internal System.Windows.Forms.Button uxWorksheetUpdateBtn;
+        internal System.Windows.Forms.DataGridView uxExcelSheetViewerGv;
+        internal System.Windows.Forms.Button uxImportBtn;
+        internal System.Windows.Forms.Label uxExcelSheetLbl;
+        internal System.Windows.Forms.TextBox uxExcelSheetTxt;
+        internal System.Windows.Forms.Label uxWorksheetLbl;
+        internal System.Windows.Forms.ComboBox uxExcelWorksheetCmbo;
+        internal System.Windows.Forms.Button uxExcelBrowseBtn;
     }
 }
 

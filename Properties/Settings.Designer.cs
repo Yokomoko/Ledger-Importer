@@ -22,5 +22,15 @@ namespace Jonas_Sage_Importer.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=ADAM-PC;Initial Catalog=Purchase_SaleLedger;Integrated Security=True")]
+        public string Purchase_SaleLedger {
+            get {
+                return ((string)(this["Purchase_SaleLedger"]));
+            }
+        }
     }
 }
