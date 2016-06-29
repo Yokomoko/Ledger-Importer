@@ -35,7 +35,7 @@ namespace Jonas_Sage_Importer
             Left = (screen.Width / 2) - (Width / 2);
             Text = Application.ProductName;
             uxRemoveNewerRecordsDt.Value = DateTime.Today;
-
+            uxImportSourceCmbo.SelectedIndex = 1;
             StatusStripLabel.Text = @"OK";
             TopMost = true;
 
