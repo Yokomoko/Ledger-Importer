@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 using SageImporterLibrary;
+using Telerik.WinControls.UI;
 
 namespace Jonas_Sage_Importer
 {
@@ -146,7 +147,7 @@ namespace Jonas_Sage_Importer
             }
         }
 
-        public static void DeleteHistoricalCheck(ComboBox sourceComboBox, ComboBox typeComboBox, bool removeNewer, DateTime removeNewerDt)
+        public static void DeleteHistoricalCheck(RadDropDownList sourceComboBox, RadDropDownList typeComboBox, bool removeNewer, DateTime removeNewerDt)
         {
             if (sourceComboBox.SelectedIndex == 1)
             {

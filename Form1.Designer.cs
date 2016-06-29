@@ -32,6 +32,7 @@ namespace Jonas_Sage_Importer
         /// </summary>
         private void InitializeComponent()
         {
+            Telerik.WinControls.UI.TableViewDefinition tableViewDefinition1 = new Telerik.WinControls.UI.TableViewDefinition();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.StatusStrip1 = new System.Windows.Forms.StatusStrip();
             this.StatusStripLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -51,24 +52,35 @@ namespace Jonas_Sage_Importer
             this.changeLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gpExcelFileFind = new System.Windows.Forms.OpenFileDialog();
-            this.uxImportSourceCmbo = new System.Windows.Forms.ComboBox();
             this.uxImportSourceLbl = new System.Windows.Forms.Label();
             this.uxInclusiveLbl = new System.Windows.Forms.Label();
-            this.uxRemoveNewerRecordsDt = new System.Windows.Forms.DateTimePicker();
-            this.uxRemoveNewerRecordsChk = new System.Windows.Forms.CheckBox();
-            this.uxImportTypeCmbo = new System.Windows.Forms.ComboBox();
             this.uxImportTypeLbl = new System.Windows.Forms.Label();
-            this.uxWorksheetUpdateBtn = new System.Windows.Forms.Button();
-            this.uxExcelSheetViewerGv = new System.Windows.Forms.DataGridView();
-            this.uxImportBtn = new System.Windows.Forms.Button();
             this.uxExcelSheetLbl = new System.Windows.Forms.Label();
-            this.uxExcelSheetTxt = new System.Windows.Forms.TextBox();
             this.uxWorksheetLbl = new System.Windows.Forms.Label();
-            this.uxExcelWorksheetCmbo = new System.Windows.Forms.ComboBox();
-            this.uxExcelBrowseBtn = new System.Windows.Forms.Button();
+            this.uxExcelSheetViewerGv = new Telerik.WinControls.UI.RadGridView();
+            this.uxRemoveNewerRecordsDt = new Telerik.WinControls.UI.RadDateTimePicker();
+            this.uxRemoveNewerRecordsChk = new Telerik.WinControls.UI.RadCheckBox();
+            this.uxExcelSheetTxt = new Telerik.WinControls.UI.RadTextBox();
+            this.uxWorksheetUpdateBtn = new Telerik.WinControls.UI.RadButton();
+            this.uxExcelBrowseBtn = new Telerik.WinControls.UI.RadButton();
+            this.uxImportBtn = new Telerik.WinControls.UI.RadButton();
+            this.uxImportTypeCmbo = new Telerik.WinControls.UI.RadDropDownList();
+            this.uxImportSourceCmbo = new Telerik.WinControls.UI.RadDropDownList();
+            this.uxExcelWorksheetCmbo = new Telerik.WinControls.UI.RadDropDownList();
+            this.office2010SilverTheme1 = new Telerik.WinControls.Themes.Office2010SilverTheme();
             this.StatusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uxExcelSheetViewerGv)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxExcelSheetViewerGv.MasterTemplate)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxRemoveNewerRecordsDt)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxRemoveNewerRecordsChk)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxExcelSheetTxt)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxWorksheetUpdateBtn)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxExcelBrowseBtn)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxImportBtn)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxImportTypeCmbo)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxImportSourceCmbo)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxExcelWorksheetCmbo)).BeginInit();
             this.SuspendLayout();
             // 
             // StatusStrip1
@@ -78,7 +90,7 @@ namespace Jonas_Sage_Importer
             this.StatusStrip1.Location = new System.Drawing.Point(0, 463);
             this.StatusStrip1.Name = "StatusStrip1";
             this.StatusStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.StatusStrip1.Size = new System.Drawing.Size(694, 22);
+            this.StatusStrip1.Size = new System.Drawing.Size(661, 22);
             this.StatusStrip1.SizingGrip = false;
             this.StatusStrip1.TabIndex = 28;
             this.StatusStrip1.Text = "StatusStrip1";
@@ -100,7 +112,7 @@ namespace Jonas_Sage_Importer
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(694, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(661, 24);
             this.menuStrip1.TabIndex = 29;
             this.menuStrip1.Text = "menuStrip1";
             this.menuStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.MenuStrip1ItemClicked);
@@ -116,7 +128,7 @@ namespace Jonas_Sage_Importer
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItemClick);
             // 
@@ -195,13 +207,13 @@ namespace Jonas_Sage_Importer
             // 
             this.changeLogToolStripMenuItem.Enabled = false;
             this.changeLogToolStripMenuItem.Name = "changeLogToolStripMenuItem";
-            this.changeLogToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.changeLogToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.changeLogToolStripMenuItem.Text = "Change Log";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItemClick);
             // 
@@ -209,20 +221,6 @@ namespace Jonas_Sage_Importer
             // 
             this.gpExcelFileFind.FileName = "OpenFileDialog1";
             this.gpExcelFileFind.FileOk += new System.ComponentModel.CancelEventHandler(this.GpExcelFileFindFileOk);
-            // 
-            // uxImportSourceCmbo
-            // 
-            this.uxImportSourceCmbo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.uxImportSourceCmbo.FormattingEnabled = true;
-            this.uxImportSourceCmbo.Items.AddRange(new object[] {
-            "Invoice (EPOS AR)",
-            "Invoices Posted to P+L (CSS DOWNLOAD)",
-            "Outstanding Invoices"});
-            this.uxImportSourceCmbo.Location = new System.Drawing.Point(134, 35);
-            this.uxImportSourceCmbo.MaxLength = 6;
-            this.uxImportSourceCmbo.Name = "uxImportSourceCmbo";
-            this.uxImportSourceCmbo.Size = new System.Drawing.Size(240, 21);
-            this.uxImportSourceCmbo.TabIndex = 58;
             // 
             // uxImportSourceLbl
             // 
@@ -237,45 +235,11 @@ namespace Jonas_Sage_Importer
             // 
             this.uxInclusiveLbl.AutoSize = true;
             this.uxInclusiveLbl.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.uxInclusiveLbl.Location = new System.Drawing.Point(379, 159);
+            this.uxInclusiveLbl.Location = new System.Drawing.Point(379, 156);
             this.uxInclusiveLbl.Name = "uxInclusiveLbl";
             this.uxInclusiveLbl.Size = new System.Drawing.Size(137, 13);
             this.uxInclusiveLbl.TabIndex = 56;
             this.uxInclusiveLbl.Text = "Note: This date is inclusive.";
-            // 
-            // uxRemoveNewerRecordsDt
-            // 
-            this.uxRemoveNewerRecordsDt.Enabled = false;
-            this.uxRemoveNewerRecordsDt.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.uxRemoveNewerRecordsDt.Location = new System.Drawing.Point(134, 155);
-            this.uxRemoveNewerRecordsDt.Name = "uxRemoveNewerRecordsDt";
-            this.uxRemoveNewerRecordsDt.Size = new System.Drawing.Size(239, 20);
-            this.uxRemoveNewerRecordsDt.TabIndex = 54;
-            this.uxRemoveNewerRecordsDt.Value = new System.DateTime(2016, 4, 21, 0, 0, 0, 0);
-            // 
-            // uxRemoveNewerRecordsChk
-            // 
-            this.uxRemoveNewerRecordsChk.AutoSize = true;
-            this.uxRemoveNewerRecordsChk.Location = new System.Drawing.Point(9, 157);
-            this.uxRemoveNewerRecordsChk.Name = "uxRemoveNewerRecordsChk";
-            this.uxRemoveNewerRecordsChk.Size = new System.Drawing.Size(128, 17);
-            this.uxRemoveNewerRecordsChk.TabIndex = 55;
-            this.uxRemoveNewerRecordsChk.Text = "Remove Newer Than";
-            this.uxRemoveNewerRecordsChk.UseVisualStyleBackColor = true;
-            // 
-            // uxImportTypeCmbo
-            // 
-            this.uxImportTypeCmbo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.uxImportTypeCmbo.FormattingEnabled = true;
-            this.uxImportTypeCmbo.Items.AddRange(new object[] {
-            "Invoice (EPOS AR)",
-            "Invoices Posted to P+L (CSS DOWNLOAD)",
-            "Outstanding Invoices"});
-            this.uxImportTypeCmbo.Location = new System.Drawing.Point(134, 64);
-            this.uxImportTypeCmbo.MaxLength = 6;
-            this.uxImportTypeCmbo.Name = "uxImportTypeCmbo";
-            this.uxImportTypeCmbo.Size = new System.Drawing.Size(240, 21);
-            this.uxImportTypeCmbo.TabIndex = 53;
             // 
             // uxImportTypeLbl
             // 
@@ -286,102 +250,154 @@ namespace Jonas_Sage_Importer
             this.uxImportTypeLbl.TabIndex = 52;
             this.uxImportTypeLbl.Text = "Import Type";
             // 
-            // uxWorksheetUpdateBtn
-            // 
-            this.uxWorksheetUpdateBtn.Location = new System.Drawing.Point(375, 125);
-            this.uxWorksheetUpdateBtn.Name = "uxWorksheetUpdateBtn";
-            this.uxWorksheetUpdateBtn.Size = new System.Drawing.Size(112, 23);
-            this.uxWorksheetUpdateBtn.TabIndex = 51;
-            this.uxWorksheetUpdateBtn.Text = "Update";
-            this.uxWorksheetUpdateBtn.UseVisualStyleBackColor = true;
-            // 
-            // uxExcelSheetViewerGv
-            // 
-            this.uxExcelSheetViewerGv.AllowUserToAddRows = false;
-            this.uxExcelSheetViewerGv.AllowUserToDeleteRows = false;
-            this.uxExcelSheetViewerGv.AllowUserToResizeRows = false;
-            this.uxExcelSheetViewerGv.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.uxExcelSheetViewerGv.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.uxExcelSheetViewerGv.Location = new System.Drawing.Point(6, 181);
-            this.uxExcelSheetViewerGv.Name = "uxExcelSheetViewerGv";
-            this.uxExcelSheetViewerGv.ReadOnly = true;
-            this.uxExcelSheetViewerGv.RowHeadersVisible = false;
-            this.uxExcelSheetViewerGv.Size = new System.Drawing.Size(682, 230);
-            this.uxExcelSheetViewerGv.TabIndex = 50;
-            // 
-            // uxImportBtn
-            // 
-            this.uxImportBtn.Location = new System.Drawing.Point(296, 417);
-            this.uxImportBtn.Name = "uxImportBtn";
-            this.uxImportBtn.Size = new System.Drawing.Size(93, 40);
-            this.uxImportBtn.TabIndex = 44;
-            this.uxImportBtn.Text = "Import File";
-            this.uxImportBtn.UseVisualStyleBackColor = true;
-            // 
             // uxExcelSheetLbl
             // 
             this.uxExcelSheetLbl.AutoSize = true;
-            this.uxExcelSheetLbl.Location = new System.Drawing.Point(66, 99);
+            this.uxExcelSheetLbl.Location = new System.Drawing.Point(66, 98);
             this.uxExcelSheetLbl.Name = "uxExcelSheetLbl";
             this.uxExcelSheetLbl.Size = new System.Drawing.Size(64, 13);
             this.uxExcelSheetLbl.TabIndex = 48;
             this.uxExcelSheetLbl.Text = "Excel Sheet";
             // 
-            // uxExcelSheetTxt
-            // 
-            this.uxExcelSheetTxt.Location = new System.Drawing.Point(134, 95);
-            this.uxExcelSheetTxt.Name = "uxExcelSheetTxt";
-            this.uxExcelSheetTxt.ReadOnly = true;
-            this.uxExcelSheetTxt.Size = new System.Drawing.Size(240, 20);
-            this.uxExcelSheetTxt.TabIndex = 46;
-            // 
             // uxWorksheetLbl
             // 
             this.uxWorksheetLbl.AutoSize = true;
-            this.uxWorksheetLbl.Location = new System.Drawing.Point(71, 130);
+            this.uxWorksheetLbl.Location = new System.Drawing.Point(71, 128);
             this.uxWorksheetLbl.Name = "uxWorksheetLbl";
             this.uxWorksheetLbl.Size = new System.Drawing.Size(59, 13);
             this.uxWorksheetLbl.TabIndex = 49;
             this.uxWorksheetLbl.Text = "Worksheet";
             // 
-            // uxExcelWorksheetCmbo
+            // uxExcelSheetViewerGv
             // 
-            this.uxExcelWorksheetCmbo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.uxExcelWorksheetCmbo.FormattingEnabled = true;
-            this.uxExcelWorksheetCmbo.Location = new System.Drawing.Point(134, 125);
-            this.uxExcelWorksheetCmbo.Name = "uxExcelWorksheetCmbo";
-            this.uxExcelWorksheetCmbo.Size = new System.Drawing.Size(240, 21);
-            this.uxExcelWorksheetCmbo.TabIndex = 47;
+            this.uxExcelSheetViewerGv.AutoScroll = true;
+            this.uxExcelSheetViewerGv.Location = new System.Drawing.Point(9, 184);
+            // 
+            // 
+            // 
+            this.uxExcelSheetViewerGv.MasterTemplate.AllowAddNewRow = false;
+            this.uxExcelSheetViewerGv.MasterTemplate.AllowCellContextMenu = false;
+            this.uxExcelSheetViewerGv.MasterTemplate.AllowColumnChooser = false;
+            this.uxExcelSheetViewerGv.MasterTemplate.AllowColumnHeaderContextMenu = false;
+            this.uxExcelSheetViewerGv.MasterTemplate.AllowColumnReorder = false;
+            this.uxExcelSheetViewerGv.MasterTemplate.AllowDeleteRow = false;
+            this.uxExcelSheetViewerGv.MasterTemplate.AllowDragToGroup = false;
+            this.uxExcelSheetViewerGv.MasterTemplate.AllowEditRow = false;
+            this.uxExcelSheetViewerGv.MasterTemplate.AllowRowResize = false;
+            this.uxExcelSheetViewerGv.MasterTemplate.AutoExpandGroups = true;
+            this.uxExcelSheetViewerGv.MasterTemplate.ShowRowHeaderColumn = false;
+            this.uxExcelSheetViewerGv.MasterTemplate.ViewDefinition = tableViewDefinition1;
+            this.uxExcelSheetViewerGv.Name = "uxExcelSheetViewerGv";
+            this.uxExcelSheetViewerGv.ReadOnly = true;
+            this.uxExcelSheetViewerGv.ShowGroupPanel = false;
+            this.uxExcelSheetViewerGv.ShowNoDataText = false;
+            this.uxExcelSheetViewerGv.Size = new System.Drawing.Size(643, 230);
+            this.uxExcelSheetViewerGv.TabIndex = 59;
+            this.uxExcelSheetViewerGv.Text = "radGridView1";
+            this.uxExcelSheetViewerGv.UseScrollbarsInHierarchy = true;
+            // 
+            // uxRemoveNewerRecordsDt
+            // 
+            this.uxRemoveNewerRecordsDt.Location = new System.Drawing.Point(134, 152);
+            this.uxRemoveNewerRecordsDt.Name = "uxRemoveNewerRecordsDt";
+            this.uxRemoveNewerRecordsDt.Size = new System.Drawing.Size(240, 20);
+            this.uxRemoveNewerRecordsDt.TabIndex = 60;
+            this.uxRemoveNewerRecordsDt.TabStop = false;
+            this.uxRemoveNewerRecordsDt.Text = "29 June 2016";
+            this.uxRemoveNewerRecordsDt.Value = new System.DateTime(2016, 6, 29, 19, 47, 5, 950);
+            // 
+            // uxRemoveNewerRecordsChk
+            // 
+            this.uxRemoveNewerRecordsChk.Location = new System.Drawing.Point(6, 153);
+            this.uxRemoveNewerRecordsChk.Name = "uxRemoveNewerRecordsChk";
+            this.uxRemoveNewerRecordsChk.Size = new System.Drawing.Size(124, 18);
+            this.uxRemoveNewerRecordsChk.TabIndex = 61;
+            this.uxRemoveNewerRecordsChk.Text = "Remove Newer Than";
+            this.uxRemoveNewerRecordsChk.ToggleStateChanged += new Telerik.WinControls.UI.StateChangedEventHandler(this.uxRemoveNewerRecordsChk_ToggleStateChanged);
+            // 
+            // uxExcelSheetTxt
+            // 
+            this.uxExcelSheetTxt.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.uxExcelSheetTxt.Enabled = false;
+            this.uxExcelSheetTxt.Location = new System.Drawing.Point(134, 94);
+            this.uxExcelSheetTxt.Name = "uxExcelSheetTxt";
+            this.uxExcelSheetTxt.ReadOnly = true;
+            this.uxExcelSheetTxt.Size = new System.Drawing.Size(240, 20);
+            this.uxExcelSheetTxt.TabIndex = 62;
+            // 
+            // uxWorksheetUpdateBtn
+            // 
+            this.uxWorksheetUpdateBtn.Location = new System.Drawing.Point(376, 123);
+            this.uxWorksheetUpdateBtn.Name = "uxWorksheetUpdateBtn";
+            this.uxWorksheetUpdateBtn.Size = new System.Drawing.Size(70, 21);
+            this.uxWorksheetUpdateBtn.TabIndex = 63;
+            this.uxWorksheetUpdateBtn.Text = "Update";
+            this.uxWorksheetUpdateBtn.Click += new System.EventHandler(this.uxWorksheetUpdateBtn_Click);
             // 
             // uxExcelBrowseBtn
             // 
-            this.uxExcelBrowseBtn.Location = new System.Drawing.Point(375, 94);
+            this.uxExcelBrowseBtn.Location = new System.Drawing.Point(376, 94);
             this.uxExcelBrowseBtn.Name = "uxExcelBrowseBtn";
-            this.uxExcelBrowseBtn.Size = new System.Drawing.Size(35, 23);
-            this.uxExcelBrowseBtn.TabIndex = 45;
+            this.uxExcelBrowseBtn.Size = new System.Drawing.Size(45, 20);
+            this.uxExcelBrowseBtn.TabIndex = 64;
             this.uxExcelBrowseBtn.Text = "...";
-            this.uxExcelBrowseBtn.UseVisualStyleBackColor = true;
+            this.uxExcelBrowseBtn.Click += new System.EventHandler(this.uxExcelBrowseBtn_Click);
+            // 
+            // uxImportBtn
+            // 
+            this.uxImportBtn.Location = new System.Drawing.Point(284, 418);
+            this.uxImportBtn.Name = "uxImportBtn";
+            this.uxImportBtn.Size = new System.Drawing.Size(93, 40);
+            this.uxImportBtn.TabIndex = 65;
+            this.uxImportBtn.Text = "Import File";
+            this.uxImportBtn.Click += new System.EventHandler(this.uxImportBtn_Click);
+            // 
+            // uxImportTypeCmbo
+            // 
+            this.uxImportTypeCmbo.Location = new System.Drawing.Point(134, 66);
+            this.uxImportTypeCmbo.Name = "uxImportTypeCmbo";
+            this.uxImportTypeCmbo.ReadOnly = true;
+            this.uxImportTypeCmbo.Size = new System.Drawing.Size(240, 20);
+            this.uxImportTypeCmbo.TabIndex = 66;
+            // 
+            // uxImportSourceCmbo
+            // 
+            this.uxImportSourceCmbo.Location = new System.Drawing.Point(134, 37);
+            this.uxImportSourceCmbo.Name = "uxImportSourceCmbo";
+            this.uxImportSourceCmbo.ReadOnly = true;
+            this.uxImportSourceCmbo.Size = new System.Drawing.Size(240, 20);
+            this.uxImportSourceCmbo.TabIndex = 67;
+            this.uxImportSourceCmbo.SelectedIndexChanged += new Telerik.WinControls.UI.Data.PositionChangedEventHandler(this.uxImportSourceCmbo_SelectedIndexChanged);
+            // 
+            // uxExcelWorksheetCmbo
+            // 
+            this.uxExcelWorksheetCmbo.Location = new System.Drawing.Point(134, 123);
+            this.uxExcelWorksheetCmbo.Name = "uxExcelWorksheetCmbo";
+            this.uxExcelWorksheetCmbo.ReadOnly = true;
+            this.uxExcelWorksheetCmbo.Size = new System.Drawing.Size(240, 20);
+            this.uxExcelWorksheetCmbo.TabIndex = 68;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(694, 485);
+            this.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.ClientSize = new System.Drawing.Size(661, 485);
+            this.Controls.Add(this.uxExcelWorksheetCmbo);
             this.Controls.Add(this.uxImportSourceCmbo);
+            this.Controls.Add(this.uxImportTypeCmbo);
+            this.Controls.Add(this.uxImportBtn);
+            this.Controls.Add(this.uxExcelBrowseBtn);
+            this.Controls.Add(this.uxWorksheetUpdateBtn);
+            this.Controls.Add(this.uxExcelSheetTxt);
+            this.Controls.Add(this.uxRemoveNewerRecordsChk);
+            this.Controls.Add(this.uxRemoveNewerRecordsDt);
+            this.Controls.Add(this.uxExcelSheetViewerGv);
             this.Controls.Add(this.uxImportSourceLbl);
             this.Controls.Add(this.uxInclusiveLbl);
-            this.Controls.Add(this.uxRemoveNewerRecordsDt);
-            this.Controls.Add(this.uxRemoveNewerRecordsChk);
-            this.Controls.Add(this.uxImportTypeCmbo);
             this.Controls.Add(this.uxImportTypeLbl);
-            this.Controls.Add(this.uxWorksheetUpdateBtn);
-            this.Controls.Add(this.uxExcelSheetViewerGv);
-            this.Controls.Add(this.uxImportBtn);
             this.Controls.Add(this.uxExcelSheetLbl);
-            this.Controls.Add(this.uxExcelSheetTxt);
             this.Controls.Add(this.uxWorksheetLbl);
-            this.Controls.Add(this.uxExcelWorksheetCmbo);
-            this.Controls.Add(this.uxExcelBrowseBtn);
             this.Controls.Add(this.StatusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -394,7 +410,17 @@ namespace Jonas_Sage_Importer
             this.StatusStrip1.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.uxExcelSheetViewerGv.MasterTemplate)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.uxExcelSheetViewerGv)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxRemoveNewerRecordsDt)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxRemoveNewerRecordsChk)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxExcelSheetTxt)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxWorksheetUpdateBtn)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxExcelBrowseBtn)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxImportBtn)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxImportTypeCmbo)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxImportSourceCmbo)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uxExcelWorksheetCmbo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -419,21 +445,22 @@ namespace Jonas_Sage_Importer
         private ToolStripMenuItem invoicesPostedToPAndLToolStripMenuItem;
         public StatusStrip StatusStrip1;
         private ToolStripMenuItem customerStatementToolStripMenuItem;
-        internal ComboBox uxImportSourceCmbo;
         internal Label uxImportSourceLbl;
         private Label uxInclusiveLbl;
-        private DateTimePicker uxRemoveNewerRecordsDt;
-        private CheckBox uxRemoveNewerRecordsChk;
-        internal ComboBox uxImportTypeCmbo;
         internal Label uxImportTypeLbl;
-        internal Button uxWorksheetUpdateBtn;
-        internal DataGridView uxExcelSheetViewerGv;
-        internal Button uxImportBtn;
         internal Label uxExcelSheetLbl;
-        internal TextBox uxExcelSheetTxt;
         internal Label uxWorksheetLbl;
-        internal ComboBox uxExcelWorksheetCmbo;
-        internal Button uxExcelBrowseBtn;
+        private Telerik.WinControls.UI.RadGridView uxExcelSheetViewerGv;
+        private Telerik.WinControls.UI.RadDateTimePicker uxRemoveNewerRecordsDt;
+        private Telerik.WinControls.UI.RadCheckBox uxRemoveNewerRecordsChk;
+        private Telerik.WinControls.UI.RadTextBox uxExcelSheetTxt;
+        private Telerik.WinControls.UI.RadButton uxWorksheetUpdateBtn;
+        private Telerik.WinControls.UI.RadButton uxExcelBrowseBtn;
+        private Telerik.WinControls.UI.RadButton uxImportBtn;
+        private Telerik.WinControls.UI.RadDropDownList uxImportTypeCmbo;
+        private Telerik.WinControls.UI.RadDropDownList uxImportSourceCmbo;
+        private Telerik.WinControls.UI.RadDropDownList uxExcelWorksheetCmbo;
+        private Telerik.WinControls.Themes.Office2010SilverTheme office2010SilverTheme1;
     }
 }
 

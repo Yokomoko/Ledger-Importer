@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using SageImporterLibrary;
+using Telerik.WinControls.UI;
 
 namespace Jonas_Sage_Importer
 {
@@ -38,11 +39,11 @@ namespace Jonas_Sage_Importer
             uxImportSourceCmbo.SelectedIndex = 1;
             StatusStripLabel.Text = @"OK";
             TopMost = true;
-
+            uxRemoveNewerRecordsDt.Enabled = uxRemoveNewerRecordsChk.Checked;
         }
 
 
-        private void ImportFromGridView(ComboBox importSource)
+        private void ImportFromGridView(RadDropDownList importSource)
         {
             if (importSource == null) throw new ArgumentNullException(nameof(importSource));
             var attempting = "Attempting to Import";
@@ -433,8 +434,8 @@ namespace Jonas_Sage_Importer
         }
     }
 
-        private void uxImportSourceCmbo_SelectedIndexChanged(object sender, EventArgs e)
-    {
+        private void uxImportSourceCmbo_SelectedIndexChanged(object sender, Telerik.WinControls.UI.Data.PositionChangedEventArgs e)
+        {
         LoadImportTypeCmbo(uxImportSourceCmbo.SelectedIndex);
         if (uxImportSourceCmbo.SelectedIndex == 1)
         {
@@ -489,5 +490,16 @@ namespace Jonas_Sage_Importer
             }
             TableBindingSource.DataSource = Table;
         }
+
+        private void uxImportTypeCmbo_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void uxRemoveNewerRecordsChk_ToggleStateChanged(object sender, Telerik.WinControls.UI.StateChangedEventArgs args)
+        {
+           uxRemoveNewerRecordsDt.Enabled = uxRemoveNewerRecordsChk.Checked;
+        }
+
     }
 }

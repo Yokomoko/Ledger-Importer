@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Office.Interop.Excel;
+using Telerik.WinControls.UI;
 using Application = Microsoft.Office.Interop.Excel.Application;
 using DataTable = System.Data.DataTable;
 using TextBox = System.Windows.Forms.TextBox;
@@ -37,7 +38,7 @@ namespace SageImporterLibrary
 
         }
 
-        public static BindingSource ExcelDialogFind(OpenFileDialog excelFileFind, TextBox directoryBox, ComboBox excelSheetName, DataGridView excelGridView, BindingSource tableBindingSource)
+        public static BindingSource ExcelDialogFind(OpenFileDialog excelFileFind, RadTextBox directoryBox, RadDropDownList excelSheetName, RadGridView excelGridView, BindingSource tableBindingSource)
         {
 
 
@@ -118,7 +119,7 @@ namespace SageImporterLibrary
             return tableBindingSource;
         }
 
-        private static OleDbDataAdapter GetDataAdapter(string selectCommand, TextBox directoryBox)
+        private static OleDbDataAdapter GetDataAdapter(string selectCommand, RadTextBox directoryBox)
         {
             string connectionString = ($"Provider=Microsoft.ACE.OLEDB.12.0;Data Source ={directoryBox.Text}" +
                                        @";Extended Properties= ""Excel 8.0;HDR=Yes;IMEX=2""");
@@ -251,7 +252,7 @@ namespace SageImporterLibrary
             throw new FormatException("Unhandled input format: " + input);
         }
 
-        public static DataTable GetData(string selectCommand, TextBox directoryBox)
+        public static DataTable GetData(string selectCommand, RadTextBox directoryBox)
         {
             OleDbDataAdapter dAdapter = GetDataAdapter(selectCommand, directoryBox);
             DataTable internalTable = FillDataTable(dAdapter);
