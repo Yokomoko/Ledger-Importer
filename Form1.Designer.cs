@@ -574,6 +574,7 @@
             this.uxImportSourceCmbo.Name = "uxImportSourceCmbo";
             this.uxImportSourceCmbo.Size = new System.Drawing.Size(240, 21);
             this.uxImportSourceCmbo.TabIndex = 43;
+            this.uxImportSourceCmbo.SelectedIndexChanged += new System.EventHandler(this.uxImportSourceCmbo_SelectedIndexChanged);
             // 
             // uxImportSourceLbl
             // 
@@ -668,6 +669,7 @@
             this.uxImportBtn.TabIndex = 29;
             this.uxImportBtn.Text = "Import File";
             this.uxImportBtn.UseVisualStyleBackColor = true;
+            this.uxImportBtn.Click += new System.EventHandler(this.uxImportBtn_Click);
             // 
             // uxExcelSheetLbl
             // 
@@ -712,6 +714,7 @@
             this.uxExcelBrowseBtn.TabIndex = 30;
             this.uxExcelBrowseBtn.Text = "Browse";
             this.uxExcelBrowseBtn.UseVisualStyleBackColor = true;
+            this.uxExcelBrowseBtn.Click += new System.EventHandler(this.uxExcelBrowseBtn_Click);
             // 
             // gpExcelFileFind
             // 

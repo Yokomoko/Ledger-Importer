@@ -117,8 +117,6 @@ namespace Jonas_Sage_Importer
                 {
                     DeleteHistoricalLedger(comboBox.SelectedIndex, removeNewerDt);
                 }
-
-
             }
         }
 

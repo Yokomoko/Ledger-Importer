@@ -2,8 +2,6 @@
 using System.Data.SqlClient;
 using System.Data;
 using System.Windows.Forms;
-using System.Drawing;
-using System.Reflection;
 using SageImporterLibrary;
 
 namespace Jonas_Sage_Importer

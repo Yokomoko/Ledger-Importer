@@ -1,6 +1,7 @@
 ﻿using System;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Data;
+using System.Data.Common;
 using System.Data.OleDb;
 using System.Linq;
 using System.Windows.Forms;
@@ -130,11 +131,11 @@ namespace SageImporterLibrary
         }
 
 
-        private static DataTable FillDataTable(System.Data.OleDb.OleDbDataAdapter adapter)
+        private static DataTable FillDataTable(DbDataAdapter adapter)
         {
-            DataTable dTable = new DataTable();
+            var dTable = new DataTable();
 
-            DataTable daTab = new DataTable();
+            var daTab = new DataTable();
 
             try
             {
@@ -148,6 +149,7 @@ namespace SageImporterLibrary
                 MessageBox.Show(
                     $"64-Bit OLEDB Provider for ODBC Not Installed."
                     + @"Please go to the Resources folder in your install directory (Default C:\Program Files (x86)\Eposgroup\Jonas Ledger Management Tool\Resources) and run Ace.exe" + $"\n \n {ioexception.Message}");
+                
             }
             catch (ArgumentException argex)
             {
