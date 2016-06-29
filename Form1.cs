@@ -479,6 +479,11 @@ namespace Jonas_Sage_Importer
 
         private void uxWorksheetUpdateBtn_Click(object sender, EventArgs e)
         {
+            if (uxExcelSheetTxt.Text == "")
+            {
+                StatusStripLabel.Text = @"Nothing to Update!";
+                return;
+            }
             try
             {
                 Table = ExcelImport.GetData(uxExcelWorksheetCmbo.Text, uxExcelSheetTxt);
@@ -491,10 +496,6 @@ namespace Jonas_Sage_Importer
             TableBindingSource.DataSource = Table;
         }
 
-        private void uxImportTypeCmbo_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private void uxRemoveNewerRecordsChk_ToggleStateChanged(object sender, Telerik.WinControls.UI.StateChangedEventArgs args)
         {

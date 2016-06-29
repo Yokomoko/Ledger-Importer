@@ -354,26 +354,27 @@ namespace Jonas_Sage_Importer
             // 
             // uxImportTypeCmbo
             // 
+            this.uxImportTypeCmbo.DropDownStyle = Telerik.WinControls.RadDropDownStyle.DropDownList;
             this.uxImportTypeCmbo.Location = new System.Drawing.Point(134, 66);
             this.uxImportTypeCmbo.Name = "uxImportTypeCmbo";
-            this.uxImportTypeCmbo.ReadOnly = true;
             this.uxImportTypeCmbo.Size = new System.Drawing.Size(240, 20);
             this.uxImportTypeCmbo.TabIndex = 66;
             // 
             // uxImportSourceCmbo
             // 
+            this.uxImportSourceCmbo.DropDownAnimationEasing = Telerik.WinControls.RadEasingType.InQuart;
+            this.uxImportSourceCmbo.DropDownStyle = Telerik.WinControls.RadDropDownStyle.DropDownList;
             this.uxImportSourceCmbo.Location = new System.Drawing.Point(134, 37);
             this.uxImportSourceCmbo.Name = "uxImportSourceCmbo";
-            this.uxImportSourceCmbo.ReadOnly = true;
             this.uxImportSourceCmbo.Size = new System.Drawing.Size(240, 20);
             this.uxImportSourceCmbo.TabIndex = 67;
             this.uxImportSourceCmbo.SelectedIndexChanged += new Telerik.WinControls.UI.Data.PositionChangedEventHandler(this.uxImportSourceCmbo_SelectedIndexChanged);
             // 
             // uxExcelWorksheetCmbo
             // 
+            this.uxExcelWorksheetCmbo.DropDownStyle = Telerik.WinControls.RadDropDownStyle.DropDownList;
             this.uxExcelWorksheetCmbo.Location = new System.Drawing.Point(134, 123);
             this.uxExcelWorksheetCmbo.Name = "uxExcelWorksheetCmbo";
-            this.uxExcelWorksheetCmbo.ReadOnly = true;
             this.uxExcelWorksheetCmbo.Size = new System.Drawing.Size(240, 20);
             this.uxExcelWorksheetCmbo.TabIndex = 68;
             // 
@@ -381,7 +382,7 @@ namespace Jonas_Sage_Importer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.BackColor = System.Drawing.Color.Azure;
             this.ClientSize = new System.Drawing.Size(661, 485);
             this.Controls.Add(this.uxExcelWorksheetCmbo);
             this.Controls.Add(this.uxImportSourceCmbo);
