@@ -1,9 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SageImporterLibrary
 {
@@ -28,7 +24,6 @@ namespace SageImporterLibrary
             if (File.Exists(FileName))
             {
                 WriteStream(FileName, inputText);
-                return;
             }
             else
             {

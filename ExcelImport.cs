@@ -1,16 +1,18 @@
 ﻿using System;
-using Excel = Microsoft.Office.Interop.Excel;
 using System.Data;
 using System.Data.Common;
 using System.Data.OleDb;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using Microsoft.Office.Interop.Excel;
+using Application = Microsoft.Office.Interop.Excel.Application;
+using DataTable = System.Data.DataTable;
+using TextBox = System.Windows.Forms.TextBox;
 
 namespace SageImporterLibrary
 {
-    using System.Globalization;
-    using System.Reflection;
-
     public class ExcelImport
     {
         private static int columnSize = 17;
@@ -39,13 +41,13 @@ namespace SageImporterLibrary
         {
 
 
-            System.IO.Stream strm = null;
+            Stream strm = null;
 
             try
             {
                 strm = excelFileFind.OpenFile();
             }
-            catch (System.IO.IOException ioex)
+            catch (IOException ioex)
             {
                 MessageBox.Show($"File is being used elsewhere. Please close the file and try again. \n {ioex.Message}");
             }
@@ -55,7 +57,7 @@ namespace SageImporterLibrary
             }
 
 
-            directoryBox.Text = excelFileFind.FileName.ToString();
+            directoryBox.Text = excelFileFind.FileName;
             Type officeType = Type.GetTypeFromProgID("Excel.Application");
 
             if (officeType == null)
@@ -64,13 +66,13 @@ namespace SageImporterLibrary
             }
             else
             {
-                Excel.Application oXL = null;
+                Application oXL = null;
                 try
                 {
                     strm?.Close();
                     try
                     {
-                        oXL = new Excel.Application { Visible = false };
+                        oXL = new Application { Visible = false };
                     }
                     catch (Exception ex)
                     {
@@ -86,7 +88,7 @@ namespace SageImporterLibrary
                     var oWb = oXL.Workbooks.Open(directoryBox.Text, ReadOnly: true);
 
                     excelSheetName.Items.Clear();
-                    foreach (Excel.Worksheet oSheet in oWb.Sheets)
+                    foreach (Worksheet oSheet in oWb.Sheets)
                     {
                         excelSheetName.Items.Add(oSheet.Name);
                     }
@@ -116,16 +118,16 @@ namespace SageImporterLibrary
             return tableBindingSource;
         }
 
-        private static System.Data.OleDb.OleDbDataAdapter GetDataAdapter(string selectCommand, TextBox directoryBox)
+        private static OleDbDataAdapter GetDataAdapter(string selectCommand, TextBox directoryBox)
         {
             string connectionString = ($"Provider=Microsoft.ACE.OLEDB.12.0;Data Source ={directoryBox.Text}" +
                                        @";Extended Properties= ""Excel 8.0;HDR=Yes;IMEX=2""");
 
-            System.Data.OleDb.OleDbConnection connectionBuilder = new System.Data.OleDb.OleDbConnection(connectionString);
+            OleDbConnection connectionBuilder = new OleDbConnection(connectionString);
 
             string command = ($"select * from [{selectCommand}$]");
 
-            System.Data.OleDb.OleDbDataAdapter adapter = new System.Data.OleDb.OleDbDataAdapter(command, connectionBuilder);
+            OleDbDataAdapter adapter = new OleDbDataAdapter(command, connectionBuilder);
 
             return adapter;
         }
@@ -223,7 +225,7 @@ namespace SageImporterLibrary
                 return dTableClone;
 
             }
-            else if (columnSize > originalSize)
+            if (columnSize > originalSize)
             {
                 MessageBox.Show($"There were {columnSize} columns expected but there were actually {originalSize}." +
                                 $"Extra columns will be automatically removed from the end.\n Please ensure that you have selected " +

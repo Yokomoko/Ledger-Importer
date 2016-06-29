@@ -1,20 +1,17 @@
-﻿namespace Jonas_Sage_Importer
+﻿using System;
+using System.ComponentModel;
+using System.Data;
+using System.Data.OleDb;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Forms;
+using Microsoft.Win32;
+using SageImporterLibrary;
+
+namespace Jonas_Sage_Importer
 {
-    using Microsoft.Win32;
-    using SageImporterLibrary;
-    using System;
-    using System.ComponentModel;
-    using System.Data.OleDb;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Windows.Forms;
-    using Application = System.Windows.Forms.Application;
-    using DataTable = System.Data.DataTable;
-    using Rectangle = System.Drawing.Rectangle;
-
-
     public partial class Form1 : Form
     {
         protected OleDbDataAdapter DataAdapter = new OleDbDataAdapter();
@@ -33,82 +30,21 @@
 
         private void Form1Load(object sender, EventArgs e)
         {
-            Rectangle screen = Screen.PrimaryScreen.WorkingArea;
-            this.Top = (screen.Height / 2) - (this.Height / 2);
-            this.Left = (screen.Width / 2) - (this.Width / 2);
-            this.Text = Application.ProductName;
-            this.dTRemoveNewerThan.Value = DateTime.Today;
+            var screen = Screen.PrimaryScreen.WorkingArea;
+            Top = (screen.Height / 2) - (Height / 2);
+            Left = (screen.Width / 2) - (Width / 2);
+            Text = Application.ProductName;
+            uxRemoveNewerRecordsDt.Value = DateTime.Today;
 
-            this.StatusStripLabel.Text = @"OK";
-            this.TopMost = true;
-            //SqlServerTypes.Utilities.LoadNativeAssemblies(AppDomain.CurrentDomain.BaseDirectory);
+            StatusStripLabel.Text = @"OK";
+            TopMost = true;
 
         }
 
-
-        /*
-        public void UpdateStatusStripLabel(string labelText)
-        {
-            this.StatusStripLabel.Text = labelText;
-        }
-        */
-        private void DirectorySelectionClick(object sender, EventArgs e)
-        {
-            /*
-            else
-            {
-                if (ExcelImport.ExcelDialogBox(this.gpExcelFileFind).ShowDialog()
-                    != System.Windows.Forms.DialogResult.OK)
-                {
-                    return;
-                }
-                try
-                {
-                    this.Table = ExcelImport.GetData(this.gpWorksheetCombo.Text, this.gpExcelSheetName);
-                }
-                catch (ArgumentException iaex)
-                {
-                    LogToText.WriteToLog($"Invalid Argument (Might have pressed close on the directory box - {iaex}");
-                    return;
-                }
-                this.TableBindingSource.DataSource = this.Table;
-            }
-            */
-            if (this.ImportTypeCombo.SelectedIndex == -1)
-            {
-                MessageBox.Show(@"Please select an import type first.");
-            }
-            else
-            {
-                if (ExcelImport.ExcelDialogBox(this.ExcelFileFind).ShowDialog() != System.Windows.Forms.DialogResult.OK)
-                {
-                    return;
-                }
-                try
-                {
-                    this.Table = ExcelImport.GetData(this.ExcelSheetName.Text, this.DirectoryBox);
-                }
-                catch (ArgumentException iaex)
-                {
-                    LogToText.WriteToLog($"Invalid Argument (Might have pressed close on the directory box - {iaex}");
-                    return;
-                }
-                this.TableBindingSource.DataSource = this.Table;
-            }
-        }
-
-        private void ExcelFileFindFileOk(object sender, CancelEventArgs e)
-        {
-            this.TableBindingSource = ExcelImport.ExcelDialogFind(
-                this.ExcelFileFind,
-                this.DirectoryBox,
-                this.ExcelSheetName,
-                this.ExcelGridView,
-                this.TableBindingSource);
-        }
 
         private void ImportFromGridView(ComboBox importSource)
         {
+            if (importSource == null) throw new ArgumentNullException(nameof(importSource));
             var attempting = "Attempting to Import";
             var failed = "Failed to Import";
 
@@ -122,7 +58,7 @@
                         try
                         {
                             StatusStripLabel.Text = $"{attempting} Invoices from Application.";
-                            Jonas.ImportInvoices("Sage_Grid_ImportInvoices", this.Table, importSource.Text);
+                            Jonas.ImportInvoices("Sage_Grid_ImportInvoices", Table, importSource.Text);
                             StatusStripLabel.Text = "";
                         }
                         catch (Exception ex)
@@ -137,13 +73,13 @@
                         StatusStripLabel.Text = $"{attempting} Sales Orders from Application.";
                         try
                         {
-                            Jonas.ImportInvoices("Sage_Grid_ImportOrders", this.Table, importSource.Text);
+                            Jonas.ImportInvoices("Sage_Grid_ImportOrders", Table, importSource.Text);
                             StatusStripLabel.Text = "";
                         }
                         catch (Exception ex)
                         {
                             string failedToImport = $"{failed} Sales Orders from Application.";
-                            this.StatusStripLabel.Text = $"{failedToImport}";
+                            StatusStripLabel.Text = $"{failedToImport}";
                             MessageBox.Show($"{failedToImport} \n \n {ex.Message}", @"Failed");
                             return;
                         }
@@ -233,14 +169,12 @@
 
             #endregion
 
-            DbConnectionsCs.LogImport(uxExcelSheetTxt.Text, this.uxImportTypeCmbo.Text, this.uxExcelSheetViewerGv.RowCount);
+            DbConnectionsCs.LogImport(uxExcelSheetTxt.Text, uxImportTypeCmbo.Text, uxExcelSheetViewerGv.RowCount);
         }
 
         private void uxImportBtn_Click(object sender, EventArgs e)
         {
             
-            string selectedIndex = uxImportSourceCmbo.Text;
-
             if (uxExcelSheetTxt.Text == "")
             {
                 MessageBox.Show(@"Please select an Excel sheet.", @"Error");
@@ -251,115 +185,7 @@
         }
 
     
-    private void ImportFileClick(object sender, EventArgs e)
-    {
-        string attempting = "Attempting to Import";
-        string failed = "Failed to Import";
-
-
-        if (this.DirectoryBox.Text == "")
-        {
-            MessageBox.Show(@"Please select an Excel sheet.", @"Error");
-        }
-        else
-        {
-            if (ImportTypeCombo.SelectedIndex == 0)
-            {
-                //Import to Temporary Table
-                try
-                {
-
-                    this.StatusStripLabel.Text = $"{attempting} Invoices from Application.";
-                    Sage.ImportInvoices("Sage_Grid_ImportInvoices", this.Table);
-                    this.StatusStripLabel.Text = "";
-                }
-                catch (Exception ex)
-                {
-                    string failedToImport = $"{failed} Invoices from Application.";
-                    this.StatusStripLabel.Text = $"{failedToImport}";
-                    MessageBox.Show($"{failedToImport} \n \n {ex.Message}", @"Failed");
-                    return;
-                }
-                //Import to Main Database Table
-                try
-                {
-                    this.StatusStripLabel.Text = $"{attempting} Invoices from Temporary Table.";
-                    Sage.CommitImport("Sage_Temp_ImportInvoices");
-                    this.StatusStripLabel.Text = @"Successfully imported invoices.";
-                }
-                catch (Exception ex)
-                {
-                    string failedToImport = $"{failed} Invoices from Temporary Table.";
-                    this.StatusStripLabel.Text = $"{failedToImport}";
-                    MessageBox.Show($"{failedToImport} \n \n {ex.Message}");
-                    return;
-                }
-            }
-            else if (ImportTypeCombo.SelectedIndex == 1)
-            {
-                this.StatusStripLabel.Text = $"{attempting} Sales Orders from Application.";
-                try
-                {
-                    Sage.ImportInvoices("Sage_Grid_ImportOrders", this.Table);
-                    this.StatusStripLabel.Text = "";
-                }
-                catch (Exception ex)
-                {
-                    string failedToImport = $"{failed} Sales Orders from Application.";
-                    this.StatusStripLabel.Text = $"{failedToImport}";
-                    MessageBox.Show($"{failedToImport} \n \n {ex.Message}", @"Failed");
-                    return;
-                }
-                Sage.DeletePreviousOrders();
-
-                try
-                {
-                    this.StatusStripLabel.Text = $"{attempting} Sales Orders from Temporary Table";
-                    Sage.CommitImport("Sage_Temp_ImportOrders");
-                    this.StatusStripLabel.Text = @"Successfully imported Sales Orders.";
-                }
-                catch (Exception ex)
-                {
-                    string failedToImport = $"{failed} Sales Orders from Temporary Table.";
-                    this.StatusStripLabel.Text = $"{failedToImport} \n \n {ex.Message}";
-                    return;
-                }
-            }
-            else
-            {
-                MessageBox.Show(@"Please Select an Import Type.", @"Error");
-            }
-            DbConnectionsCs.LogImport(DirectoryBox.Text, this.ImportTypeCombo.Text, this.ExcelGridView.RowCount);
-        }
-    }
-
-    private void BtnExitClick(object sender, EventArgs e)
-    {
-
-    }
-
-    private void UpdateBtnClick(object sender, EventArgs e)
-    {
-        if (this.ExcelSheetName.Text != "" || ExcelSheetName.Text != null)
-        {
-            try
-            {
-                this.ExcelGridView.DataSource = this.TableBindingSource;
-                this.Table = ExcelImport.GetData(ExcelSheetName.Text, DirectoryBox);
-                this.TableBindingSource.DataSource = this.Table;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error Updating. \n \n {ex.Message}");
-            }
-        }
-        else
-        {
-            MessageBox.Show(@"Sheet name can not be blank.");
-        }
-    }
-
-    private void ExitToolStripMenuItemClick(object sender, EventArgs e)
+   private void ExitToolStripMenuItemClick(object sender, EventArgs e)
     {
         Application.ExitThread();
         Application.Exit();
@@ -397,55 +223,15 @@
 
     }
 
-    private void GpImportFileBtnClick(object sender, EventArgs e)
-    {
-        
-
-
-        DbConnectionsCs.LogImport(this.gpExcelSheetName.Text, this.gpImportTypeCombo.Text, this.gpExcelGridView.RowCount);
-        //MessageBox.Show(@"Not currently implemented.",@"Error");
-    }
-
-    private void GpBrowseForSheetBtnClick(object sender, EventArgs e)
-    {
-
-        if (this.gpImportTypeCombo.SelectedIndex == -1)
-        {
-            MessageBox.Show(@"Please select an import type first.");
-        }
-        else
-        {
-            if (ExcelImport.ExcelDialogBox(this.gpExcelFileFind).ShowDialog()
-                != System.Windows.Forms.DialogResult.OK)
-            {
-                return;
-            }
-            try
-            {
-                this.Table = ExcelImport.GetData(this.gpWorksheetCombo.Text, this.gpExcelSheetName);
-            }
-            catch (ArgumentException iaex)
-            {
-                LogToText.WriteToLog($"Invalid Argument (Might have pressed close on the directory box - {iaex}");
-                return;
-            }
-            this.TableBindingSource.DataSource = this.Table;
-        }
-    }
-
+    
     private void GpExcelFileFindFileOk(object sender, CancelEventArgs e)
     {
-        this.TableBindingSource = ExcelImport.ExcelDialogFind(
-            this.gpExcelFileFind,
-            this.gpExcelSheetName,
-            this.gpWorksheetCombo,
-            this.gpExcelGridView,
-            this.TableBindingSource);
-    }
-
-    private void checkBox1_CheckedChanged(object sender, EventArgs e)
-    {
-        this.dTRemoveNewerThan.Enabled = this.chkBoxRemoveNewerThan.Checked;
+        TableBindingSource = ExcelImport.ExcelDialogFind(
+            gpExcelFileFind,
+            uxExcelSheetTxt,
+            uxExcelWorksheetCmbo,
+            uxExcelSheetViewerGv,
+            TableBindingSource);
     }
 
 
@@ -459,12 +245,12 @@
 
     private void invoicesPostedToPAndLToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        this.CreateNewReportWindow(@"/Invoices Posted to P and L");
+        CreateNewReportWindow(@"/Invoices Posted to P and L");
     }
 
     private void customerStatementToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        this.CreateNewReportWindow(@"/Customer Statement");
+        CreateNewReportWindow(@"/Customer Statement");
     }
 
     private void CreateNewReportWindow(string path)
@@ -474,9 +260,9 @@
         Loading lS = new Loading { TopMost = true };
         lS.UpdateText($"Loading Report, please wait...\nThis may take up to a minute the first time the report is generated.");
 
-        if (this.IsSqlClrTypesInstalled())
+        if (IsSqlClrTypesInstalled())
         {
-            if (this.IsReportViewerInstalled())
+            if (IsReportViewerInstalled())
             {
                 try
                 {
@@ -511,7 +297,7 @@
                        + @"Do you want to install this now?", @"Report Viewer is not installed", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     MessageBox.Show(@"This application will now be minimised.");
-                    this.WindowState = FormWindowState.Minimized;
+                    WindowState = FormWindowState.Minimized;
                     Process.Start($@"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}\Resources\ReportViewer2012.msi");
                 }
                 else
@@ -532,7 +318,7 @@
                 MessageBox.Show(@"This application will now be minimised");
                     WindowState = FormWindowState.Minimized;
                 Process.Start(
-                    $@"{System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}\Resources\SQLSysClrTypes2012.msi");
+                    $@"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}\Resources\SQLSysClrTypes2012.msi");
             }
             else
             {
@@ -541,7 +327,7 @@
         }
         lS.Hide();
 
-        if (lS.Visible == true)
+        if (lS.Visible)
         {
             lS.Hide();
         }
@@ -574,14 +360,8 @@
     }
     public void UpdateStripText(string message)
     {
-        this.StatusStripLabel.Text = message;
+        StatusStripLabel.Text = message;
     }
-
-    private void UpdateBtn_Click(object sender, EventArgs e)
-    {
-
-    }
-
 
     private void uxMainTb_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -679,21 +459,35 @@
             }
             else
             {
-                if (ExcelImport.ExcelDialogBox(ExcelFileFind).ShowDialog() != DialogResult.OK)
+                if (ExcelImport.ExcelDialogBox(gpExcelFileFind).ShowDialog() != DialogResult.OK)
                 {
                     return;
                 }
                 try
                 {
-                    this.Table = ExcelImport.GetData(this.ExcelSheetName.Text, this.DirectoryBox);
+                    Table = ExcelImport.GetData(uxExcelWorksheetCmbo.Text, uxExcelSheetTxt);
                 }
                 catch (ArgumentException iaex)
                 {
                     LogToText.WriteToLog($"Invalid Argument (Might have pressed close on the directory box - {iaex}");
                     return;
                 }
-                this.TableBindingSource.DataSource = this.Table;
+                TableBindingSource.DataSource = Table;
             }
+        }
+
+        private void uxWorksheetUpdateBtn_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Table = ExcelImport.GetData(uxExcelWorksheetCmbo.Text, uxExcelSheetTxt);
+            }
+            catch (ArgumentException iaex)
+            {
+                LogToText.WriteToLog($"Invalid Argument (Might have pressed close on the directory box - {iaex}");
+                return;
+            }
+            TableBindingSource.DataSource = Table;
         }
     }
 }

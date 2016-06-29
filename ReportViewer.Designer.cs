@@ -1,11 +1,13 @@
-﻿namespace Jonas_Sage_Importer
+﻿using System.ComponentModel;
+
+namespace Jonas_Sage_Importer
 {
     partial class ReportViewer
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.

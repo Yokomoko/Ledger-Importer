@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Data;
+using System.Data.SqlClient;
 using System.Windows.Forms;
 using SageImporterLibrary;
 
@@ -19,7 +19,7 @@ namespace Jonas_Sage_Importer
         /// </returns>
         private static string ConnectionString()
         {
-            return SageImporterLibrary.DbConnectionsCs.ConnectionString();
+            return DbConnectionsCs.ConnectionString();
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace Jonas_Sage_Importer
         /// <returns></returns>
         private static string DbNameTxt()
         {
-            return SageImporterLibrary.DbConnectionsCs.DbNameTxt();
+            return DbConnectionsCs.DbNameTxt();
         }
 
 
@@ -74,7 +74,7 @@ namespace Jonas_Sage_Importer
                 string commitSuccess = $"{ImpName}: Successfully committed new data to the {DbNameTxt()} database";
                 LogToText.WriteToLog(commitSuccess);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 string commitFailure = $"{ImpName}: Error committing data to the database: \n{ex.Message}";
                 LogToText.WriteToLog(commitFailure);

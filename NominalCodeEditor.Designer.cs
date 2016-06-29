@@ -1,11 +1,14 @@
-﻿namespace Jonas_Sage_Importer
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace Jonas_Sage_Importer
 {
     partial class NominalCodeEditor
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -219,20 +222,20 @@
 
         #endregion
 
-        private System.Windows.Forms.DataGridView nominalCodesGridView;
-        private System.Windows.Forms.BindingSource nominalCodeBindingSource;
-        private System.Windows.Forms.Label lblFilter;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Button exitBtn;
-        private System.Windows.Forms.Label nominalCodeLbl;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox nominalCodeTxtBox;
-        private System.Windows.Forms.TextBox nominalDescriptionTxtBox;
-        private System.Windows.Forms.Button addNominalCodeBtn;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnDelete;
-        private System.Windows.Forms.Button btnRefresh;
+        private DataGridView nominalCodesGridView;
+        private BindingSource nominalCodeBindingSource;
+        private Label lblFilter;
+        private TextBox textBox1;
+        private Button exitBtn;
+        private Label nominalCodeLbl;
+        private Label label1;
+        private TextBox nominalCodeTxtBox;
+        private TextBox nominalDescriptionTxtBox;
+        private Button addNominalCodeBtn;
+        private GroupBox groupBox1;
+        private GroupBox groupBox2;
+        private Button btnSave;
+        private Button btnDelete;
+        private Button btnRefresh;
     }
 }

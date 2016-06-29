@@ -1,13 +1,11 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Jonas_Sage_Importer
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
-
     [Table("PostedInvoicesExtended")]
-    public partial class PostedInvoicesExtended
+    public class PostedInvoicesExtended
     {
         [Key]
         [Column(Order = 0)]

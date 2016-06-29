@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Data;
-using System.Windows.Forms;
+using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Drawing;
-using System.Reflection;
+using System.Windows.Forms;
 
 namespace SageImporterLibrary
 
 {
-    using System.Data.OleDb;
-    using System.Runtime.InteropServices;
-    using System.Security.Cryptography.X509Certificates;
-
-    using Jonas_Sage_Importer;
-
     public class DbConnectionsCs : IDisposable
     {
         private SqlDataAdapter dataAdapter = new SqlDataAdapter();
@@ -129,8 +123,8 @@ namespace SageImporterLibrary
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString()))
             {
-               this.dataAdapter = new SqlDataAdapter(selectCommand, conn);
-                SqlCommandBuilder commandBuilder = new SqlCommandBuilder(this.dataAdapter);
+               dataAdapter = new SqlDataAdapter(selectCommand, conn);
+                SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter);
 
                 DataTable table = new DataTable();
                 //BindingSource bSource = new BindingSource();
@@ -138,7 +132,7 @@ namespace SageImporterLibrary
                 //dataAdapter.Fill(table);
                 //bSource.DataSource = table;
 
-                return this.dataAdapter;
+                return dataAdapter;
             }
         }
 
@@ -148,7 +142,7 @@ namespace SageImporterLibrary
                 "Insert into log (LogDate, ExcelPath, ImportType, NumberOfRowsImported) Values (GetDate(), @ExcelPath, @ImportType, @RowCount)";
             try
             {
-                using (SqlConnection sqconn = new SqlConnection(ConnectionString().ToString()))
+                using (SqlConnection sqconn = new SqlConnection(ConnectionString()))
                 {
                     using (SqlCommand sqcomm = new SqlCommand(sqlQuery, sqconn))
                     {
@@ -218,15 +212,15 @@ namespace SageImporterLibrary
                 return;
             }
             // dispose managed resources
-            this.DataAdapter.Dispose();
-            this.TableBindingSource.Dispose();
-            this.Table.Dispose();
+            DataAdapter.Dispose();
+            TableBindingSource.Dispose();
+            Table.Dispose();
             // free native resources
         }
 
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
     }

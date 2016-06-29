@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Data.SqlClient;
+using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Windows.Forms;
 using SageImporterLibrary;
-using System.ComponentModel;
 
 namespace Jonas_Sage_Importer
 {
@@ -104,7 +104,7 @@ namespace Jonas_Sage_Importer
                 string commitSuccess = $"{impName}: Successfully committed new data to the {DbNameTxt()} database";
                 LogToText.WriteToLog(commitSuccess);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 string commitFailure = $"{impName}: Error committing data to the database: \n{ex.Message}";
                 LogToText.WriteToLog(commitFailure);
@@ -159,7 +159,6 @@ namespace Jonas_Sage_Importer
                             MessageBoxButtons.YesNo);
                     if (dialogResult != DialogResult.Yes)
                     {
-                        return;
                     }
                     else
                     {
@@ -167,7 +166,6 @@ namespace Jonas_Sage_Importer
                     }
                 }
             }
-            return;
         }
 
         public static void DeleteHistoricalLedger(int commandType, DateTime removeDateTime, string ImpName)

@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.SqlClient;
 using System.Windows.Forms;
+using SageImporterLibrary;
 
 namespace Jonas_Sage_Importer
 {
-    using System.Data.SqlClient;
-
-    using SageImporterLibrary;
-
     public partial class NominalCodeEditor : Form
     {
         private readonly string connectionString = DbConnectionsCs.ConnectionString();
@@ -39,28 +31,28 @@ namespace Jonas_Sage_Importer
 
         public NominalCodeEditor()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         private void NominalCodeEditor_Load(object sender, EventArgs e)
         {
 
-            this.dbConnections.GetNominalCodeAdapter().Fill(this.ds);
-            this.nominalCodesGridView.DataSource = this.ds.Tables[0];
+            dbConnections.GetNominalCodeAdapter().Fill(ds);
+            nominalCodesGridView.DataSource = ds.Tables[0];
             
 
-            this.nominalCodesGridView.Columns[1].Width = this.nominalCodesGridView.Width
-                                                       - this.nominalCodesGridView.Columns[0].Width
+            nominalCodesGridView.Columns[1].Width = nominalCodesGridView.Width
+                                                       - nominalCodesGridView.Columns[0].Width
                                                      - 21;
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             // this.bindingSource.Filter = $"convert(NominalCode,'System.String') like '%{this.textBox1.Text.ToString()}%' OR convert(Description,'System.String') like '%{this.textBox1.Text.ToString()}%'";
-            string rowFilter = $"Convert([{"NominalCode"}],'System.String') like '%{this.textBox1.Text}%'";
-            rowFilter += $"OR [{"Description"}] like '%{this.textBox1.Text}%'";
+            string rowFilter = $"Convert([{"NominalCode"}],'System.String') like '%{textBox1.Text}%'";
+            rowFilter += $"OR [{"Description"}] like '%{textBox1.Text}%'";
 
-            DataTable dataTable = this.nominalCodesGridView.DataSource as DataTable;
+            DataTable dataTable = nominalCodesGridView.DataSource as DataTable;
             if (dataTable != null)
             {
                 dataTable.DefaultView.RowFilter = rowFilter;
@@ -69,18 +61,18 @@ namespace Jonas_Sage_Importer
 
          private void ExitBtnClick(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void AddNominalCodeBtnClick(object sender, EventArgs e)
         {
-            this.nCode = this.nominalCodeTxtBox.Text;
-            this.nDesc = this.nominalDescriptionTxtBox.Text;
+            nCode = nominalCodeTxtBox.Text;
+            nDesc = nominalDescriptionTxtBox.Text;
 
 
-            int nominalCode = this.nCode !=string.Empty ? int.Parse(this.nCode) : 0;
+            int nominalCode = nCode !=string.Empty ? int.Parse(nCode) : 0;
 
-            string nominalDescription = this.nDesc;
+            string nominalDescription = nDesc;
 
             if (nominalCode != 0 && nominalDescription !=string.Empty)
             {
@@ -88,13 +80,13 @@ namespace Jonas_Sage_Importer
 
                 try
                 {
-                    DataRow newRow = this.ds.Tables[0].NewRow();
-                    newRow["NominalCode"] = Int32.Parse(this.nCode);
-                    newRow["Description"] = this.nDesc;
+                    DataRow newRow = ds.Tables[0].NewRow();
+                    newRow["NominalCode"] = Int32.Parse(nCode);
+                    newRow["Description"] = nDesc;
 
-                    this.ds.Tables[0].Rows.Add(newRow);
-                    this.nominalCodeTxtBox.Text = "";
-                    this.nominalDescriptionTxtBox.Text = "";
+                    ds.Tables[0].Rows.Add(newRow);
+                    nominalCodeTxtBox.Text = "";
+                    nominalDescriptionTxtBox.Text = "";
 
                 }
                 catch (SqlException sqlex)
@@ -125,7 +117,7 @@ namespace Jonas_Sage_Importer
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (this.nominalCodesGridView.SelectedRows.Count > 0)
+            if (nominalCodesGridView.SelectedRows.Count > 0)
             {
                 DialogResult dResult = MessageBox.Show(
                 $"Are you sure you want to delete this nominal code? \nOnce it is removed you will not be able to recover this.",
@@ -134,8 +126,8 @@ namespace Jonas_Sage_Importer
 
                 if (dResult == DialogResult.Yes)
                 {
-                    this.dbConnections.GetNominalCodeAdapter().AcceptChangesDuringUpdate = true;
-                    this.nominalCodesGridView.Rows.RemoveAt(this.nominalCodesGridView.SelectedRows[0].Index);
+                    dbConnections.GetNominalCodeAdapter().AcceptChangesDuringUpdate = true;
+                    nominalCodesGridView.Rows.RemoveAt(nominalCodesGridView.SelectedRows[0].Index);
                 }
             }
         }
@@ -144,14 +136,14 @@ namespace Jonas_Sage_Importer
         {
             try
             {
-                this.changes = this.ds.GetChanges();
+                changes = ds.GetChanges();
 
-                if (this.changes != null)
+                if (changes != null)
                 {
 
-                    this.ds.AcceptChanges();
-                    this.dbConnections.GetNominalCodeAdapter().AcceptChangesDuringUpdate = true;
-                    this.dbConnections.GetNominalCodeAdapter().Update(this.changes);
+                    ds.AcceptChanges();
+                    dbConnections.GetNominalCodeAdapter().AcceptChangesDuringUpdate = true;
+                    dbConnections.GetNominalCodeAdapter().Update(changes);
                     
 
                     MessageBox.Show(@"The Nominal Codes have been Updated.");
@@ -165,7 +157,7 @@ namespace Jonas_Sage_Importer
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            this.nominalCodesGridView.Refresh();
+            nominalCodesGridView.Refresh();
         }
 
     }

@@ -1,12 +1,10 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Jonas_Sage_Importer
 {
-    using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Data.Entity.Spatial;
-
-    public partial class GP_Temp_InvoiceLedger
+    public class GP_Temp_InvoiceLedger
     {
         [Key]
         [Column(Order = 0)]

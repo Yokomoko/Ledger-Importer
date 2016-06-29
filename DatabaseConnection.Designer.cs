@@ -1,11 +1,14 @@
-﻿namespace Jonas_Sage_Importer
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace Jonas_Sage_Importer
 {
     partial class DatabaseConnection
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -256,24 +259,24 @@
 
         #endregion
 
-        internal System.Windows.Forms.Button Button1;
-        internal System.Windows.Forms.Label DBLocLbl;
-        internal System.Windows.Forms.TextBox UsernameTxtBox;
-        internal System.Windows.Forms.TextBox DbNameTxtBox;
-        internal System.Windows.Forms.TextBox ConnectionStringTxtBox;
-        internal System.Windows.Forms.TextBox DbLocationTxtBox;
-        internal System.Windows.Forms.Label Passwordlbl;
-        internal System.Windows.Forms.Label ConnectionStatus;
-        internal System.Windows.Forms.Label DbNameLbl;
-        internal System.Windows.Forms.Label Label3;
-        internal System.Windows.Forms.TextBox PasswordTxtBox;
-        internal System.Windows.Forms.Label UserNameLbl;
-        internal System.Windows.Forms.Button ConnTestBtn;
-        private System.Windows.Forms.Button dbConnectionExitBtn;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.TextBox txtBoxReportServerUrl;
-        private System.Windows.Forms.Label lblRptServerUrl;
-        private System.Windows.Forms.Button btnUpdateRptServerUrl;
+        internal Button Button1;
+        internal Label DBLocLbl;
+        internal TextBox UsernameTxtBox;
+        internal TextBox DbNameTxtBox;
+        internal TextBox ConnectionStringTxtBox;
+        internal TextBox DbLocationTxtBox;
+        internal Label Passwordlbl;
+        internal Label ConnectionStatus;
+        internal Label DbNameLbl;
+        internal Label Label3;
+        internal TextBox PasswordTxtBox;
+        internal Label UserNameLbl;
+        internal Button ConnTestBtn;
+        private Button dbConnectionExitBtn;
+        private GroupBox groupBox1;
+        private GroupBox groupBox2;
+        private TextBox txtBoxReportServerUrl;
+        private Label lblRptServerUrl;
+        private Button btnUpdateRptServerUrl;
     }
 }

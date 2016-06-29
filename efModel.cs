@@ -1,11 +1,8 @@
+using System.Data.Entity;
+
 namespace Jonas_Sage_Importer
 {
-    using System;
-    using System.Data.Entity;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
-
-    public partial class efModel : DbContext
+    public class efModel : DbContext
     {
         public efModel()
             : base("name=efModel")

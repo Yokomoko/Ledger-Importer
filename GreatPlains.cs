@@ -1,16 +1,11 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Reflection;
 using System.Windows.Forms;
-
 using SageImporterLibrary;
 
 namespace Jonas_Sage_Importer
 {
-    using System.Runtime.CompilerServices;
-
     class GreatPlains
     {
         private const string ImpName = "GREAT PLAINS";
@@ -23,7 +18,7 @@ namespace Jonas_Sage_Importer
         /// </returns>
         private static string ConnectionString()
         {
-            return SageImporterLibrary.DbConnectionsCs.ConnectionString();
+            return DbConnectionsCs.ConnectionString();
         }
 
         /// <summary>
@@ -32,7 +27,7 @@ namespace Jonas_Sage_Importer
         /// <returns></returns>
         private static string DbNameTxt()
         {
-            return SageImporterLibrary.DbConnectionsCs.DbNameTxt();
+            return DbConnectionsCs.DbNameTxt();
         }
 
         
@@ -46,7 +41,7 @@ namespace Jonas_Sage_Importer
                 return;
             }
 
-            if (removeNewer == true)
+            if (removeNewer)
             {
                 DeleteHistoricalCheck(comboBox, true, removeNewerDt);
             }
@@ -96,7 +91,6 @@ namespace Jonas_Sage_Importer
                 MessageBox.Show(
                     $"Failed to import {comboBox.Text} from Temporary Table.\n\n{exception.Message}",
                     @"Failed");
-                return;
             }
         }
 
@@ -111,7 +105,6 @@ namespace Jonas_Sage_Importer
                         MessageBoxButtons.YesNo);
                 if (dialogResult != DialogResult.Yes)
                 {
-                    return;
                 }
                 else
                 {
