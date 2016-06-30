@@ -31,7 +31,7 @@ namespace SageImporterLibrary
             excelFileFind.Title = @"Please Select a File";
             excelFileFind.FileName = "";
             excelFileFind.ValidateNames = true;
-            excelFileFind.Filter = @"Excel Worksheets|*.xls;*.xlsx;*.csv";
+            excelFileFind.Filter = @"Excel Worksheets|*.xls;*.xlsx;";
             excelFileFind.FilterIndex = 1;
 
             return excelFileFind;
