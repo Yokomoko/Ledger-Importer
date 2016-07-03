@@ -186,9 +186,12 @@ from
 	SaleLedger
 Left Join GLTypes on SaleLedger.GL = GLTypes.GLNo
 Left Join MaintenanceGLBridge on SaleLedger.GL = MaintenanceGLBridge.GLNumber
-Left Join MaintenanceTypes on MaintenanceGLBridge.MaintenanceType = MaintenanceTypes.MaintenanceType
+Left Join MaintenanceTypes on MaintenanceGLBridge.MaintenanceType = MaintenanceTypes.MaintenanceType or MaintenanceTypes.MaintTypeDescription = SaleLedger.Category
+
 Left Join JonasGroups on MaintenanceTypes.JonasGroup = JonasGroups.GroupNo
 GO
+
+
 
 
 
