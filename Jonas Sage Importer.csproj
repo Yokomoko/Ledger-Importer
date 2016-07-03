@@ -209,6 +209,7 @@
     <Compile Include="Sage.cs" />
     <Compile Include="SaleLedger.cs" />
     <Compile Include="SaleLedgerExtended.cs" />
+    <Content Include="Update Scripts\Update Script.sql" />
     <EmbeddedResource Include="AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </EmbeddedResource>

@@ -48,9 +48,11 @@ namespace Jonas_Sage_Importer
             if (importSource == null) throw new ArgumentNullException(nameof(importSource));
             var attempting = "Attempting to Import";
             var failed = "Failed to Import";
+            var gridProcedureName = String.Empty;
+            var tempProcedureName = String.Empty;
 
             #region Sage
-            if (uxImportSourceCmbo.SelectedIndex == 0)
+            if (importSource.SelectedIndex == 0)
             {
                 switch (uxImportTypeCmbo.SelectedIndex)
                 {
@@ -103,7 +105,7 @@ namespace Jonas_Sage_Importer
             }
             #endregion
             #region GreatPlains
-            if (uxImportSourceCmbo.SelectedIndex == 1)
+            if (importSource.SelectedIndex == 1)
             {
                 if (uxExcelSheetViewerGv.Rows.Count == 0)
                 {
@@ -113,11 +115,10 @@ namespace Jonas_Sage_Importer
 
                 if (uxRemoveNewerRecordsChk.Checked)
                 {
-                    Jonas.DeleteHistoricalCheck(uxImportSourceCmbo, uxImportTypeCmbo, true, uxRemoveNewerRecordsDt.Value);
+                    Jonas.DeleteHistoricalCheck(importSource, uxImportTypeCmbo, true, uxRemoveNewerRecordsDt.Value);
                 }
 
-                string gridProcedureName = String.Empty;
-                string tempProcedureName = String.Empty;
+
 
                 switch (uxImportTypeCmbo.SelectedIndex)
                 {
@@ -133,7 +134,7 @@ namespace Jonas_Sage_Importer
                         tempProcedureName = "GP_Temp_ImportPostedInvoices";
                         break;
                     case 2:
-                        Jonas.DeleteHistoricalLedger(uxImportTypeCmbo.SelectedIndex, new DateTime(1900, 01, 01), uxImportSourceCmbo.Text); ;
+                        Jonas.DeleteHistoricalLedger(uxImportTypeCmbo.SelectedIndex, new DateTime(1900, 01, 01), importSource.Text); ;
                         gridProcedureName = "GP_Grid_ImportOutstandingInvoices";
                         tempProcedureName = "GP_Temp_ImportOutstandingInvoices";
                         break;
@@ -141,7 +142,7 @@ namespace Jonas_Sage_Importer
                 try
                 {
                     StatusStripLabel.Text = ($"Attempting to Import {uxImportTypeCmbo.Text} from Application.");
-                    Jonas.ImportInvoices(gridProcedureName, Table, uxImportSourceCmbo.Text);
+                    Jonas.ImportInvoices(gridProcedureName, Table, importSource.Text);
                 }
                 catch (Exception exception)
                 {
@@ -152,7 +153,7 @@ namespace Jonas_Sage_Importer
                 try
                 {
                     StatusStripLabel.Text = ($"Attempting to Import {uxImportTypeCmbo.Text} from Temporary Table.");
-                    Jonas.CommitImport(tempProcedureName, uxImportSourceCmbo.Text);
+                    Jonas.CommitImport(tempProcedureName, importSource.Text);
                     StatusStripLabel.Text = ($"Successfully imported {uxImportTypeCmbo.Text} from Temporary Table.");
                 }
                 catch (Exception exception)
@@ -163,11 +164,48 @@ namespace Jonas_Sage_Importer
                         @"Failed");
                     return;
                 }
-            
-        }
+
+            }
             #endregion
             #region CRM
 
+            if (importSource.SelectedIndex == 2)
+            {
+                if (uxImportTypeCmbo.SelectedIndex == 0)
+                {
+                    gridProcedureName = "CRM_Grid_ImportOrders";
+                    tempProcedureName = "CRM_Temp_ImportOrders";
+
+                    try
+                    {
+                        StatusStripLabel.Text = ($"Attempting ti Import {uxImportTypeCmbo.Text} from Application");
+                        Jonas.ImportInvoices(gridProcedureName, Table, importSource.Text);
+                        StatusStripLabel.Text = ($"Successfully imported {uxImportTypeCmbo.Text} from Application");
+                    }
+                    catch (Exception exception)
+                    {
+                        StatusStripLabel.Text = ($"Failed to Import {uxImportTypeCmbo.Text} from Application.");
+                        MessageBox.Show($"Failed to import {uxImportTypeCmbo.Text} from Application.\n\n{exception.Message}", @"Failed");
+                        return;
+                    }
+
+                    try
+                    {
+                        StatusStripLabel.Text = ($"Attempting to Import {uxImportTypeCmbo.Text} from Temporary Table.");
+                        Jonas.CommitImport(tempProcedureName, importSource.Text);
+                        StatusStripLabel.Text = ($"Successfully imported {uxImportTypeCmbo.Text} from Temporary Table.");
+                    }
+                    catch (Exception exception)
+                    {
+                        StatusStripLabel.Text = $"Failed to Import {uxImportTypeCmbo.Text} from Temporary Table.";
+                        MessageBox.Show(
+                            $"Failed to import {uxImportTypeCmbo.Text} from Temporary Table.\n\n{exception.Message}",
+                            @"Failed");
+                        return;
+                    }
+
+                }
+            }
             #endregion
 
             DbConnectionsCs.LogImport(uxExcelSheetTxt.Text, uxImportTypeCmbo.Text, uxExcelSheetViewerGv.RowCount);
@@ -175,282 +213,282 @@ namespace Jonas_Sage_Importer
 
         private void uxImportBtn_Click(object sender, EventArgs e)
         {
-            
+
             if (uxExcelSheetTxt.Text == "")
             {
                 MessageBox.Show(@"Please select an Excel sheet.", @"Error");
                 return;
             }
             ImportFromGridView(uxImportSourceCmbo);
-            
+
         }
 
-    
-   private void ExitToolStripMenuItemClick(object sender, EventArgs e)
-    {
-        Application.ExitThread();
-        Application.Exit();
-    }
 
-    private void AboutToolStripMenuItemClick(object sender, EventArgs e)
-    {
-        AboutBox box = new AboutBox { TopMost = true };
-        box.ShowDialog();
-    }
-
-    private void ConnectionSettingsToolStripMenuItemClick(object sender, EventArgs e)
-    {
-        DatabaseConnection dbConnection = new DatabaseConnection
+        private void ExitToolStripMenuItemClick(object sender, EventArgs e)
         {
-            TopMost = true,
-            StartPosition = FormStartPosition.CenterScreen
-        };
-        dbConnection.Activate();
-        dbConnection.ShowDialog();
-    }
+            Application.ExitThread();
+            Application.Exit();
+        }
 
-    private void NominalCodeEditorToolStripMenuItemClick(object sender, EventArgs e)
-    {
-        NominalCodeEditor codeEditor = new NominalCodeEditor
+        private void AboutToolStripMenuItemClick(object sender, EventArgs e)
         {
-            TopMost = true,
-            StartPosition = FormStartPosition.CenterScreen
-        };
-        codeEditor.Show();
-    }
+            AboutBox box = new AboutBox { TopMost = true };
+            box.ShowDialog();
+        }
 
-    private void MenuStrip1ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-    {
+        private void ConnectionSettingsToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            DatabaseConnection dbConnection = new DatabaseConnection
+            {
+                TopMost = true,
+                StartPosition = FormStartPosition.CenterScreen
+            };
+            dbConnection.Activate();
+            dbConnection.ShowDialog();
+        }
 
-    }
+        private void NominalCodeEditorToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            NominalCodeEditor codeEditor = new NominalCodeEditor
+            {
+                TopMost = true,
+                StartPosition = FormStartPosition.CenterScreen
+            };
+            codeEditor.Show();
+        }
 
-    
-    private void GpExcelFileFindFileOk(object sender, CancelEventArgs e)
-    {
-        TableBindingSource = ExcelImport.ExcelDialogFind(
-            gpExcelFileFind,
-            uxExcelSheetTxt,
-            uxExcelWorksheetCmbo,
-            uxExcelSheetViewerGv,
-            TableBindingSource);
-    }
+        private void MenuStrip1ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+
+        private void GpExcelFileFindFileOk(object sender, CancelEventArgs e)
+        {
+            TableBindingSource = ExcelImport.ExcelDialogFind(
+                gpExcelFileFind,
+                uxExcelSheetTxt,
+                uxExcelWorksheetCmbo,
+                uxExcelSheetViewerGv,
+                TableBindingSource);
+        }
 
 
         private void customerLedgerByGroupToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        //ReportViewer rViewer = new ReportViewer {TopMost = true};
-
-        CreateNewReportWindow(@"/Sales Backlog and Raised Invoices");
-    }
-
-
-    private void invoicesPostedToPAndLToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        CreateNewReportWindow(@"/Invoices Posted to P and L");
-    }
-
-    private void customerStatementToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        CreateNewReportWindow(@"/Customer Statement");
-    }
-
-    private void CreateNewReportWindow(string path)
-    {
-        bool stopTimer = false;
-
-        Loading lS = new Loading { TopMost = true };
-        lS.UpdateText($"Loading Report, please wait...\nThis may take up to a minute the first time the report is generated.");
-
-        if (IsSqlClrTypesInstalled())
         {
-            if (IsReportViewerInstalled())
+            //ReportViewer rViewer = new ReportViewer {TopMost = true};
+
+            CreateNewReportWindow(@"/Sales Backlog and Raised Invoices");
+        }
+
+
+        private void invoicesPostedToPAndLToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CreateNewReportWindow(@"/Invoices Posted to P and L");
+        }
+
+        private void customerStatementToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CreateNewReportWindow(@"/Customer Statement");
+        }
+
+        private void CreateNewReportWindow(string path)
+        {
+            bool stopTimer = false;
+
+            Loading lS = new Loading { TopMost = true };
+            lS.UpdateText($"Loading Report, please wait...\nThis may take up to a minute the first time the report is generated.");
+
+            if (IsSqlClrTypesInstalled())
             {
-                try
+                if (IsReportViewerInstalled())
                 {
-                    while (stopTimer == false)
+                    try
                     {
-                        lS.Show();
-                        lS.Update();
-                        ReportViewer rViewer = new ReportViewer
+                        while (stopTimer == false)
                         {
-                            TopMost = true,
-                            StartPosition = FormStartPosition.CenterScreen
-                        };
-                        rViewer.ReportServerPathName(path);
-                        rViewer.Show();
-                        stopTimer = true;
+                            lS.Show();
+                            lS.Update();
+                            ReportViewer rViewer = new ReportViewer
+                            {
+                                TopMost = true,
+                                StartPosition = FormStartPosition.CenterScreen
+                            };
+                            rViewer.ReportServerPathName(path);
+                            rViewer.Show();
+                            stopTimer = true;
+                        }
+                    }
+                    catch (FileNotFoundException fex)
+                    {
+                        MessageBox.Show(
+                            $"Pre-requisite files are not found. Please ensure Report Viewer 2012 is installed\n\n{fex.Message}");
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error loading reports.\n\n{ex.Message}");
                     }
                 }
-                catch (FileNotFoundException fex)
+                else
                 {
-                    MessageBox.Show(
-                        $"Pre-requisite files are not found. Please ensure Report Viewer 2012 is installed\n\n{fex.Message}");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error loading reports.\n\n{ex.Message}");
+                    if (MessageBox.Show(
+                            $"Microsoft Report Viewer is not installed.\n\n"
+                           + @"Do you want to install this now?", @"Report Viewer is not installed", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        MessageBox.Show(@"This application will now be minimised.");
+                        WindowState = FormWindowState.Minimized;
+                        Process.Start($@"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}\Resources\ReportViewer2012.msi");
+                    }
+                    else
+                    {
+                        return;
+                    }
+
                 }
             }
             else
             {
                 if (MessageBox.Show(
-                        $"Microsoft Report Viewer is not installed.\n\n"
-                       + @"Do you want to install this now?", @"Report Viewer is not installed", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    $"Microsoft CLR Types are not installed.\n\n" + @"Do you want to install this now?",
+                    @"Microsoft CLR Types are not installed",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    MessageBox.Show(@"This application will now be minimised.");
+                    MessageBox.Show(@"This application will now be minimised");
                     WindowState = FormWindowState.Minimized;
-                    Process.Start($@"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}\Resources\ReportViewer2012.msi");
+                    Process.Start(
+                        $@"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}\Resources\SQLSysClrTypes2012.msi");
                 }
                 else
                 {
                     return;
                 }
-
             }
-        }
-        else
-        {
-            if (MessageBox.Show(
-                $"Microsoft CLR Types are not installed.\n\n" + @"Do you want to install this now?",
-                @"Microsoft CLR Types are not installed",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                MessageBox.Show(@"This application will now be minimised");
-                    WindowState = FormWindowState.Minimized;
-                Process.Start(
-                    $@"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)}\Resources\SQLSysClrTypes2012.msi");
-            }
-            else
-            {
-                return;
-            }
-        }
-        lS.Hide();
-
-        if (lS.Visible)
-        {
             lS.Hide();
-        }
-    }
-    /// <summary>
-    /// returns true if ReportViewer OR ReportViewer Language Pack is installed
-    /// </summary>
-    /// <returns></returns>
-    public bool IsReportViewerInstalled()
-    {
-        RegistryKey registryBase = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, string.Empty);
-        // check the two possible reportviewer v10 registry keys
-        return registryBase.OpenSubKey(@"Software\Microsoft\ReportViewer\v2.0.50727") != null
-               || registryBase.OpenSubKey(@"Software\Microsoft\ReportViewer\v9.0") != null
-               || registryBase.OpenSubKey(@"Software\Wow6432Node\Microsoft\.NETFramework\v2.0.50727\AssemblyFoldersEx\ReportViewer v10") != null
-               || registryBase.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\ReportViewer\v10.0") != null
-               || registryBase.OpenSubKey(@"SOFTWARE\Classes\Installer\Products\2443504FAD987B24B9C51B984CC4CB42") != null
-            ;
-    }
-    public bool IsSqlClrTypesInstalled()
-    {
-        RegistryKey registryBase = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, string.Empty);
-        return registryBase.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server\RefCount\SQLSysClrTypes") != null
-               || registryBase.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server\RefCount\SQLSysClrTypes11") != null
-               || registryBase.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server 2014 Redist\SQL Server System CLR Types") != null;
-    }
-    private void StatusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-    {
 
-    }
-    public void UpdateStripText(string message)
-    {
-        StatusStripLabel.Text = message;
-    }
-
-    private void uxMainTb_SelectedIndexChanged(object sender, EventArgs e)
-    {
-
-    }
-
-    private void LoadImportSourceCmbo()
-    {
-        uxImportSourceCmbo.DataSource = Enum.GetValues(typeof(JonasImporterEnums.importSources))
-            .Cast<Enum>()
-            .Select(value => new
+            if (lS.Visible)
             {
-                ((DescriptionAttribute) Attribute.GetCustomAttribute(value.GetType().GetField(value.ToString()), typeof(DescriptionAttribute))).Description,
-                value
-            })
-            .OrderBy(item => item.value)
-            .ToList();
-        uxImportSourceCmbo.DisplayMember = "Description";
-        uxImportSourceCmbo.ValueMember = "value";
-    }
-
-    private void LoadImportTypeCmbo(int importSourceCmboSelectedIndex)
-    {
-        switch (importSourceCmboSelectedIndex)
-        {
-            case 0:
-                uxImportTypeCmbo.DataSource = Enum.GetValues(typeof(JonasImporterEnums.sageImportTypes))
-                    .Cast<Enum>()
-                    .Select(value => new
-                    {
-                        ((DescriptionAttribute)
-                            Attribute.GetCustomAttribute(value.GetType().GetField(value.ToString()),
-                                typeof(DescriptionAttribute))).Description,
-                        value
-                    })
-                    .OrderBy(item => item.value)
-                    .ToList();
-                uxImportTypeCmbo.DisplayMember = "Description";
-                uxImportTypeCmbo.ValueMember = "value";
-                break;
-            case 1:
-                uxImportTypeCmbo.DataSource = Enum.GetValues(typeof(JonasImporterEnums.greatPlainsImportTypes))
-                    .Cast<Enum>()
-                    .Select(value => new
-                    {
-                        (Attribute.GetCustomAttribute(value.GetType().GetField(value.ToString()),
-                            typeof(DescriptionAttribute)) as DescriptionAttribute)?.Description,
-                        value
-                    })
-                    .OrderBy(item => item.value)
-                    .ToList();
-                uxImportTypeCmbo.DisplayMember = "Description";
-                uxImportTypeCmbo.ValueMember = "value";
-                break;
-            case 2:
-                uxImportTypeCmbo.DataSource = Enum.GetValues(typeof(JonasImporterEnums.crmImportTypes))
-                    .Cast<Enum>()
-                    .Select(value => new
-                    {
-                        (Attribute.GetCustomAttribute(value.GetType().GetField(value.ToString()),
-                            typeof(DescriptionAttribute)) as DescriptionAttribute)?.Description,
-                        value
-                    })
-                    .OrderBy(item => item.value)
-                    .ToList();
-                uxImportTypeCmbo.DisplayMember = "Description";
-                uxImportTypeCmbo.ValueMember = "value";
-                break;
+                lS.Hide();
+            }
         }
-    }
+        /// <summary>
+        /// returns true if ReportViewer OR ReportViewer Language Pack is installed
+        /// </summary>
+        /// <returns></returns>
+        public bool IsReportViewerInstalled()
+        {
+            RegistryKey registryBase = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, string.Empty);
+            // check the two possible reportviewer v10 registry keys
+            return registryBase.OpenSubKey(@"Software\Microsoft\ReportViewer\v2.0.50727") != null
+                   || registryBase.OpenSubKey(@"Software\Microsoft\ReportViewer\v9.0") != null
+                   || registryBase.OpenSubKey(@"Software\Wow6432Node\Microsoft\.NETFramework\v2.0.50727\AssemblyFoldersEx\ReportViewer v10") != null
+                   || registryBase.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\ReportViewer\v10.0") != null
+                   || registryBase.OpenSubKey(@"SOFTWARE\Classes\Installer\Products\2443504FAD987B24B9C51B984CC4CB42") != null
+                ;
+        }
+        public bool IsSqlClrTypesInstalled()
+        {
+            RegistryKey registryBase = RegistryKey.OpenRemoteBaseKey(RegistryHive.LocalMachine, string.Empty);
+            return registryBase.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server\RefCount\SQLSysClrTypes") != null
+                   || registryBase.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server\RefCount\SQLSysClrTypes11") != null
+                   || registryBase.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server 2014 Redist\SQL Server System CLR Types") != null;
+        }
+        private void StatusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+        public void UpdateStripText(string message)
+        {
+            StatusStripLabel.Text = message;
+        }
+
+        private void uxMainTb_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void LoadImportSourceCmbo()
+        {
+            uxImportSourceCmbo.DataSource = Enum.GetValues(typeof(JonasImporterEnums.importSources))
+                .Cast<Enum>()
+                .Select(value => new
+                {
+                    ((DescriptionAttribute)Attribute.GetCustomAttribute(value.GetType().GetField(value.ToString()), typeof(DescriptionAttribute))).Description,
+                    value
+                })
+                .OrderBy(item => item.value)
+                .ToList();
+            uxImportSourceCmbo.DisplayMember = "Description";
+            uxImportSourceCmbo.ValueMember = "value";
+        }
+
+        private void LoadImportTypeCmbo(int importSourceCmboSelectedIndex)
+        {
+            switch (importSourceCmboSelectedIndex)
+            {
+                case 0:
+                    uxImportTypeCmbo.DataSource = Enum.GetValues(typeof(JonasImporterEnums.sageImportTypes))
+                        .Cast<Enum>()
+                        .Select(value => new
+                        {
+                            ((DescriptionAttribute)
+                                Attribute.GetCustomAttribute(value.GetType().GetField(value.ToString()),
+                                    typeof(DescriptionAttribute))).Description,
+                            value
+                        })
+                        .OrderBy(item => item.value)
+                        .ToList();
+                    uxImportTypeCmbo.DisplayMember = "Description";
+                    uxImportTypeCmbo.ValueMember = "value";
+                    break;
+                case 1:
+                    uxImportTypeCmbo.DataSource = Enum.GetValues(typeof(JonasImporterEnums.greatPlainsImportTypes))
+                        .Cast<Enum>()
+                        .Select(value => new
+                        {
+                            (Attribute.GetCustomAttribute(value.GetType().GetField(value.ToString()),
+                                typeof(DescriptionAttribute)) as DescriptionAttribute)?.Description,
+                            value
+                        })
+                        .OrderBy(item => item.value)
+                        .ToList();
+                    uxImportTypeCmbo.DisplayMember = "Description";
+                    uxImportTypeCmbo.ValueMember = "value";
+                    break;
+                case 2:
+                    uxImportTypeCmbo.DataSource = Enum.GetValues(typeof(JonasImporterEnums.crmImportTypes))
+                        .Cast<Enum>()
+                        .Select(value => new
+                        {
+                            (Attribute.GetCustomAttribute(value.GetType().GetField(value.ToString()),
+                                typeof(DescriptionAttribute)) as DescriptionAttribute)?.Description,
+                            value
+                        })
+                        .OrderBy(item => item.value)
+                        .ToList();
+                    uxImportTypeCmbo.DisplayMember = "Description";
+                    uxImportTypeCmbo.ValueMember = "value";
+                    break;
+            }
+        }
 
         private void uxImportSourceCmbo_SelectedIndexChanged(object sender, Telerik.WinControls.UI.Data.PositionChangedEventArgs e)
         {
-        LoadImportTypeCmbo(uxImportSourceCmbo.SelectedIndex);
-        if (uxImportSourceCmbo.SelectedIndex == 1)
-        {
-            uxRemoveNewerRecordsChk.Visible = true;
-            uxRemoveNewerRecordsDt.Visible = true;
-            uxInclusiveLbl.Visible = true;
+            LoadImportTypeCmbo(uxImportSourceCmbo.SelectedIndex);
+            if (uxImportSourceCmbo.SelectedIndex == 1)
+            {
+                uxRemoveNewerRecordsChk.Visible = true;
+                uxRemoveNewerRecordsDt.Visible = true;
+                uxInclusiveLbl.Visible = true;
+            }
+            else
+            {
+                uxRemoveNewerRecordsChk.Checked = false;
+                uxRemoveNewerRecordsChk.Visible = false;
+                uxRemoveNewerRecordsDt.Visible = false;
+                uxInclusiveLbl.Visible = false;
+            }
         }
-        else
-        {
-            uxRemoveNewerRecordsChk.Checked = false;
-            uxRemoveNewerRecordsChk.Visible = false;
-            uxRemoveNewerRecordsDt.Visible = false;
-            uxInclusiveLbl.Visible = false;
-        }
-    }
 
         private void uxExcelBrowseBtn_Click(object sender, EventArgs e)
         {
@@ -499,7 +537,7 @@ namespace Jonas_Sage_Importer
 
         private void uxRemoveNewerRecordsChk_ToggleStateChanged(object sender, Telerik.WinControls.UI.StateChangedEventArgs args)
         {
-           uxRemoveNewerRecordsDt.Enabled = uxRemoveNewerRecordsChk.Checked;
+            uxRemoveNewerRecordsDt.Enabled = uxRemoveNewerRecordsChk.Checked;
         }
 
     }
