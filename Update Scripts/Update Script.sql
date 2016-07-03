@@ -90,7 +90,7 @@ CREATE TYPE [dbo].[CustomTypeSaleOrderImport_CRM] AS TABLE(
 	[Gross] [money] NULL,
 	[Profit] [money] NULL,
 	[SiteName] [nvarchar](255) NULL,
-	[Currency] [nvarchar](1) NULL,
+	[Currency] [nvarchar](3) NULL,
 	[CustOrderNo] [nvarchar](20) NULL
 )
 GO
@@ -133,13 +133,15 @@ GO
 CREATE PROCEDURE [dbo].[CRM_Temp_ImportOrders]
 AS BEGIN
 
+Delete from Purchase_SaleLedger.dbo.SaleLedger where [Type] = 'CRM Sales Order'
+
 --Import valid data from the temporary table into the main table
-Insert into Purchase_SaleLedger.dbo.SaleLedger (Date, CustRef, CustName, DueDate, Category, UniqueID, ItemDescription, Qty, Net, Tax, Gross, Profit, Type, SiteName, Currency, DeliveryAddress, CustOrderNo,InvoiceNo,ImportType)
-	Select Date,CustRef, CustName, Nullif(DueDate,''), Category, UniqueID, ItemDescription, Qty, Net, Tax, Gross, Profit, 'CRM Sales Order', SiteName, Currency, DeliveryAddress, CustOrderNo,Null,'CRM' from Temp_OrderLedger
-	WHERE NOT EXISTS (Select UniqueID from SaleLedger where UniqueID = Temp_Orderledger.UniqueID and Temp_OrderLedger.GL is not null) and Date is not null
+Insert into Purchase_SaleLedger.dbo.SaleLedger (Date, CustRef, CustName, DueDate, Category,  ItemDescription, Qty, Net, Tax, Gross, Profit, [Type], SiteName, Currency,  CustOrderNo,ImportType)
+	Select Date,CustRef, CustName, Nullif(DueDate,''), Category,  ItemDescription, Qty, Net, Tax, Gross, Profit, 'CRM Sales Order', SiteName, Currency,  CustOrderNo,'CRM' from Temp_OrderLedger
+	where Date is not null
 	and Date > '2015/01/01'
 
-Delete from Temp_OrderLedger
+--Delete from Temp_OrderLedger
 END
 GO
 
@@ -148,4 +150,4 @@ GO
 Print ''
 Print 'Updating Database version in Configuration'
 Use Purchase_SaleLedger
-Update Configuration set ConfigSetting = 2 where Label = 'DbVersion'
+Update Configuration set ConfigSetting = 1.5 where Label = 'DbVersion'
