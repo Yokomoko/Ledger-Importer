@@ -146,6 +146,52 @@ END
 GO
 
 
+Print 'Update SaleLedgerExtended View to include Category and SiteName'
+IF EXISTS(SELECT * FROM sys.views WHERE name = 'SaleLedgerExtended' AND schema_id = SCHEMA_ID('dbo'))
+DROP VIEW dbo.SaleLedgerExtended
+GO
+ CREATE View [dbo].[SaleLedgerExtended] as 
+ 
+
+Select 
+	UniqueID,
+	CustRef,
+	CustName,
+	SiteName,
+	GL,
+	GLDescription,
+	Date,
+	DueDate,
+	DATEPART(yyyy,Date) as Year,
+	DATEPART(mm,Date) as Month,
+	DATEPART(dd,Date) as Day,
+	InvoiceNo,
+	ItemDescription,
+	MaintenanceTypes.JonasGroup,
+	JonasGroups.GroupName as JonasGroupName,
+	MaintenanceGLBridge.MaintenanceType,
+	MaintenanceTypes.MaintTypeDescription,
+	MaintenanceTypes.ReportingDescription,
+	Type as EntryType,
+	Qty as QtyValue,
+	Net as NetValue,
+	Tax as TaxValue,
+	Gross as GrossValue,
+	Profit as ProfitValue,
+	CustOrderNo,
+	ImportType,
+	Category,
+	RAND(CAST(NEWID() AS varbinary)) as UniqueID2
+from 
+	SaleLedger
+Left Join GLTypes on SaleLedger.GL = GLTypes.GLNo
+Left Join MaintenanceGLBridge on SaleLedger.GL = MaintenanceGLBridge.GLNumber
+Left Join MaintenanceTypes on MaintenanceGLBridge.MaintenanceType = MaintenanceTypes.MaintenanceType
+Left Join JonasGroups on MaintenanceTypes.JonasGroup = JonasGroups.GroupNo
+GO
+
+
+
 --Always Last
 Print ''
 Print 'Updating Database version in Configuration'
