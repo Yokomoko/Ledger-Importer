@@ -8,13 +8,14 @@ using System.Windows.Forms;
 namespace SageImporterLibrary
 
 {
-    public class DbConnectionsCs : IDisposable
-    {
+    public class DbConnectionsCs : IDisposable {
         private SqlDataAdapter dataAdapter = new SqlDataAdapter();
 
         private LogToText logToText = new LogToText();
 
+
         private static string _dbLocationTxt = "192.168.15.48";
+
 
         private static string _dbNameTxt = "Purchase_SaleLedger";
 

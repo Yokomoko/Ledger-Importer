@@ -23,14 +23,26 @@ namespace SageImporterLibrary
         {
             if (File.Exists(FileName))
             {
-                WriteStream(FileName, inputText);
+                try {
+                    WriteStream(FileName, inputText);
+                }
+                catch (UnauthorizedAccessException ) {
+
+                    return;
+                }
+                
             }
             else
             {
-                var createFile = File.CreateText(FileName);
-                createFile.Close();
+                try {
+                    var createFile = File.CreateText(FileName);
+                    createFile.Close();
 
-                WriteStream(FileName, inputText);
+                    WriteStream(FileName, inputText);
+                }
+                catch (UnauthorizedAccessException) {
+                    return;
+                }
             }
 
         }

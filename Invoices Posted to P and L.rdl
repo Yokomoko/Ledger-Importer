@@ -93,7 +93,8 @@ Where
     <DataSet Name="LastImportDate">
       <Query>
         <DataSourceName>Embedded</DataSourceName>
-        <CommandText>Select top 1 * from Log where ImportType = 'Invoices Posted to P+L' order by logdate desc</CommandText>
+        <CommandText>Select top 1 * from Log where ImportType = 'Invoices Posted to P+L (CSS DOWNLOAD)' order by logdate desc</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
         <Field Name="LogDate">
@@ -2871,7 +2872,7 @@ true, "10pt")</FontSize>
                 Return ThisWeekLastYear
 
 	Case "ALL"
-	  Dim allDate as DateTime = #12/31/2199#
+	  Dim allDate as DateTime = Now()
 	return allDate
 
         End Select

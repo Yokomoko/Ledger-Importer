@@ -68,6 +68,8 @@ namespace Jonas_Sage_Importer
             this.uxImportSourceCmbo = new Telerik.WinControls.UI.RadDropDownList();
             this.uxExcelWorksheetCmbo = new Telerik.WinControls.UI.RadDropDownList();
             this.office2010SilverTheme1 = new Telerik.WinControls.Themes.Office2010SilverTheme();
+            this.salesBacklogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.raisedInvoicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StatusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uxExcelSheetViewerGv)).BeginInit();
@@ -137,29 +139,33 @@ namespace Jonas_Sage_Importer
             this.reportsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.customerLedgerByGroupToolStripMenuItem,
             this.invoicesPostedToPAndLToolStripMenuItem,
-            this.customerStatementToolStripMenuItem});
+            this.customerStatementToolStripMenuItem,
+            this.salesBacklogToolStripMenuItem,
+            this.raisedInvoicesToolStripMenuItem});
             this.reportsToolStripMenuItem.Name = "reportsToolStripMenuItem";
             this.reportsToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
             this.reportsToolStripMenuItem.Text = "Reports";
             // 
             // customerLedgerByGroupToolStripMenuItem
             // 
+            this.customerLedgerByGroupToolStripMenuItem.Enabled = false;
             this.customerLedgerByGroupToolStripMenuItem.Name = "customerLedgerByGroupToolStripMenuItem";
-            this.customerLedgerByGroupToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
-            this.customerLedgerByGroupToolStripMenuItem.Text = "Sales Backlog and Raised Invoices";
+            this.customerLedgerByGroupToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
+            this.customerLedgerByGroupToolStripMenuItem.Text = "Sales Backlog and Raised Invoices (Old)";
+            this.customerLedgerByGroupToolStripMenuItem.ToolTipText = "Please use Sales Backlog or Raised Invoices";
             this.customerLedgerByGroupToolStripMenuItem.Click += new System.EventHandler(this.customerLedgerByGroupToolStripMenuItem_Click);
             // 
             // invoicesPostedToPAndLToolStripMenuItem
             // 
             this.invoicesPostedToPAndLToolStripMenuItem.Name = "invoicesPostedToPAndLToolStripMenuItem";
-            this.invoicesPostedToPAndLToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
+            this.invoicesPostedToPAndLToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
             this.invoicesPostedToPAndLToolStripMenuItem.Text = "Invoices Posted to P and L";
             this.invoicesPostedToPAndLToolStripMenuItem.Click += new System.EventHandler(this.invoicesPostedToPAndLToolStripMenuItem_Click);
             // 
             // customerStatementToolStripMenuItem
             // 
             this.customerStatementToolStripMenuItem.Name = "customerStatementToolStripMenuItem";
-            this.customerStatementToolStripMenuItem.Size = new System.Drawing.Size(251, 22);
+            this.customerStatementToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
             this.customerStatementToolStripMenuItem.Text = "Customer Statement";
             this.customerStatementToolStripMenuItem.Click += new System.EventHandler(this.customerStatementToolStripMenuItem_Click);
             // 
@@ -378,6 +384,20 @@ namespace Jonas_Sage_Importer
             this.uxExcelWorksheetCmbo.Size = new System.Drawing.Size(240, 20);
             this.uxExcelWorksheetCmbo.TabIndex = 68;
             // 
+            // salesBacklogToolStripMenuItem
+            // 
+            this.salesBacklogToolStripMenuItem.Name = "salesBacklogToolStripMenuItem";
+            this.salesBacklogToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
+            this.salesBacklogToolStripMenuItem.Text = "Sales Backlog";
+            this.salesBacklogToolStripMenuItem.Click += new System.EventHandler(this.salesBacklogToolStripMenuItem_Click);
+            // 
+            // raisedInvoicesToolStripMenuItem
+            // 
+            this.raisedInvoicesToolStripMenuItem.Name = "raisedInvoicesToolStripMenuItem";
+            this.raisedInvoicesToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
+            this.raisedInvoicesToolStripMenuItem.Text = "Raised Invoices";
+            this.raisedInvoicesToolStripMenuItem.Click += new System.EventHandler(this.raisedInvoicesToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -462,6 +482,8 @@ namespace Jonas_Sage_Importer
         private Telerik.WinControls.UI.RadDropDownList uxImportSourceCmbo;
         private Telerik.WinControls.UI.RadDropDownList uxExcelWorksheetCmbo;
         private Telerik.WinControls.Themes.Office2010SilverTheme office2010SilverTheme1;
+        private ToolStripMenuItem salesBacklogToolStripMenuItem;
+        private ToolStripMenuItem raisedInvoicesToolStripMenuItem;
     }
 }
 

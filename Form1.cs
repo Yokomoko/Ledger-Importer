@@ -2,10 +2,12 @@
 using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using SageImporterLibrary;
@@ -51,61 +53,8 @@ namespace Jonas_Sage_Importer
             var gridProcedureName = String.Empty;
             var tempProcedureName = String.Empty;
 
-            #region Sage
-            if (importSource.SelectedIndex == 0)
-            {
-                switch (uxImportTypeCmbo.SelectedIndex)
-                {
-                    case 0:
-                        //Import to Temporary Table
-                        try
-                        {
-                            StatusStripLabel.Text = $"{attempting} Invoices from Application.";
-                            Jonas.ImportInvoices("Sage_Grid_ImportInvoices", Table, importSource.Text);
-                            StatusStripLabel.Text = "";
-                        }
-                        catch (Exception ex)
-                        {
-                            string failedToImport = $"{failed} Invoices from Application.";
-                            StatusStripLabel.Text = failedToImport;
-                            MessageBox.Show($"{failedToImport} \n \n {ex.Message}", "Failed");
-                            return;
-                        }
-                        break;
-                    case 1:
-                        StatusStripLabel.Text = $"{attempting} Sales Orders from Application.";
-                        try
-                        {
-                            Jonas.ImportInvoices("Sage_Grid_ImportOrders", Table, importSource.Text);
-                            StatusStripLabel.Text = "";
-                        }
-                        catch (Exception ex)
-                        {
-                            string failedToImport = $"{failed} Sales Orders from Application.";
-                            StatusStripLabel.Text = $"{failedToImport}";
-                            MessageBox.Show($"{failedToImport} \n \n {ex.Message}", @"Failed");
-                            return;
-                        }
-                        Jonas.DeletePreviousOrders(importSource.Text);
-
-                        try
-                        {
-                            StatusStripLabel.Text = $"{attempting} Sales Orders from Temporary Table";
-                            Jonas.CommitImport("Sage_Temp_ImportOrders", importSource.Text);
-                            StatusStripLabel.Text = @"Successfully imported Sales Orders.";
-                        }
-                        catch (Exception ex)
-                        {
-                            string failedToImport = $"{failed} Sales Orders from Temporary Table.";
-                            StatusStripLabel.Text = $"{failedToImport} \n \n {ex.Message}";
-                            return;
-                        }
-                        break;
-                }
-            }
-            #endregion
             #region GreatPlains
-            if (importSource.SelectedIndex == 1)
+            if (importSource.SelectedIndex == 0)
             {
                 if (uxExcelSheetViewerGv.Rows.Count == 0)
                 {
@@ -125,15 +74,15 @@ namespace Jonas_Sage_Importer
                     case -1:
                         MessageBox.Show(@"Please select an Import Type");
                         return;
-                    case 0:
+                    case 0: //Sage
                         gridProcedureName = "GP_Grid_ImportInvoices";
                         tempProcedureName = "GP_Temp_ImportInvoices";
                         break;
-                    case 1:
+                    case 1: //Great Pains
                         gridProcedureName = "GP_Grid_ImportPostedInvoices";
                         tempProcedureName = "GP_Temp_ImportPostedInvoices";
                         break;
-                    case 2:
+                    case 2: //OpenCRM
                         Jonas.DeleteHistoricalLedger(uxImportTypeCmbo.SelectedIndex, new DateTime(1900, 01, 01), importSource.Text); ;
                         gridProcedureName = "GP_Grid_ImportOutstandingInvoices";
                         tempProcedureName = "GP_Temp_ImportOutstandingInvoices";
@@ -169,23 +118,54 @@ namespace Jonas_Sage_Importer
             #endregion
             #region CRM
 
-            if (importSource.SelectedIndex == 2)
+            if (importSource.SelectedIndex == 1)
             {
                 if (uxImportTypeCmbo.SelectedIndex == 0)
                 {
                     gridProcedureName = "CRM_Grid_ImportOrders";
-                    tempProcedureName = "CRM_Temp_ImportOrders";
+                    switch (Table.Columns.Count) {
+                        case 14:
+                            tempProcedureName = "CRM_Temp_ImportOrders";
+                            break;
+                        case 21:
+                            tempProcedureName = "CRM_Temp_ImportOrders_Adv";
+                            break;
+                        case 22:
+                            tempProcedureName = "CRM_Temp_ImportOrders_Adv2";
+                            break;
+                        case 23:
+                            tempProcedureName = "CRM_Temp_ImportOrders_Adv3";
+                            break;
+                        default:
+                            MessageBox.Show(@"The number of columns should be either 14,21,22 or 23");
+                            return;
+                    }
+                    
 
-                    try
-                    {
-                        StatusStripLabel.Text = ($"Attempting ti Import {uxImportTypeCmbo.Text} from Application");
+                    try {
+                        StatusStripLabel.Text = ($"Attempting to Import {uxImportTypeCmbo.Text} from Application");
                         Jonas.ImportInvoices(gridProcedureName, Table, importSource.Text);
                         StatusStripLabel.Text = ($"Successfully imported {uxImportTypeCmbo.Text} from Application");
+                    }
+                    catch (SqlException sqlException) {
+                        StatusStripLabel.Text = ($"Failed to Import {uxImportTypeCmbo.Text} from Application.");
+                        
+                        StringBuilder errorMessages = new StringBuilder();
+                        for (int i = 0; i < sqlException.Errors.Count; i++) {
+                            errorMessages.Append("Index #" + i + "\n" +
+                                "Message: " + sqlException.Errors[i].Message + "\n" +
+                                "LineNumber: " + sqlException.Errors[i].LineNumber + "\n" +
+                                "Source: " + sqlException.Errors[i].Source + "\n" +
+                                "Procedure: " + sqlException.Errors[i].Procedure + "\n");
+                        }
+                        MessageBox.Show($"Failed to import {uxImportTypeCmbo.Text} from Application.\n\n{errorMessages.ToString()}", @"Failed");
+                        LogToText.WriteToLog($"Failed to import {uxImportTypeCmbo.Text} from Application.\n\n{errorMessages.ToString()}");
+                        return;
                     }
                     catch (Exception exception)
                     {
                         StatusStripLabel.Text = ($"Failed to Import {uxImportTypeCmbo.Text} from Application.");
-                        MessageBox.Show($"Failed to import {uxImportTypeCmbo.Text} from Application.\n\n{exception.Message}", @"Failed");
+                        MessageBox.Show($"Failed to import {uxImportTypeCmbo.Text} from Application.\n\n{exception.Message} \n \n {exception.InnerException}", @"Failed");
                         return;
                     }
 
@@ -208,7 +188,7 @@ namespace Jonas_Sage_Importer
             }
             #endregion
 
-            DbConnectionsCs.LogImport(uxExcelSheetTxt.Text, uxImportTypeCmbo.Text, uxExcelSheetViewerGv.RowCount);
+            DbConnectionsCs.LogImport(uxExcelSheetTxt.Text, uxImportTypeCmbo.Text == @"Sales Order" ? "OpenCRM " + uxImportTypeCmbo.Text : uxImportTypeCmbo.Text, uxExcelSheetViewerGv.RowCount);
         }
 
         private void uxImportBtn_Click(object sender, EventArgs e)
@@ -291,6 +271,15 @@ namespace Jonas_Sage_Importer
         {
             CreateNewReportWindow(@"/Customer Statement");
         }
+
+        private void salesBacklogToolStripMenuItem_Click(object sender, EventArgs e) {
+            CreateNewReportWindow(@"/Sales Backlog");
+        }
+
+        private void raisedInvoicesToolStripMenuItem_Click(object sender, EventArgs e) {
+            CreateNewReportWindow(@"/Raised Invoices");
+        }
+
 
         private void CreateNewReportWindow(string path)
         {
@@ -409,7 +398,7 @@ namespace Jonas_Sage_Importer
 
         private void LoadImportSourceCmbo()
         {
-            uxImportSourceCmbo.DataSource = Enum.GetValues(typeof(JonasImporterEnums.importSources))
+            uxImportSourceCmbo.DataSource = Enum.GetValues(typeof(JonasImporterEnums.ImportSources))
                 .Cast<Enum>()
                 .Select(value => new
                 {
@@ -420,6 +409,8 @@ namespace Jonas_Sage_Importer
                 .ToList();
             uxImportSourceCmbo.DisplayMember = "Description";
             uxImportSourceCmbo.ValueMember = "value";
+
+            
         }
 
         private void LoadImportTypeCmbo(int importSourceCmboSelectedIndex)
@@ -427,22 +418,7 @@ namespace Jonas_Sage_Importer
             switch (importSourceCmboSelectedIndex)
             {
                 case 0:
-                    uxImportTypeCmbo.DataSource = Enum.GetValues(typeof(JonasImporterEnums.sageImportTypes))
-                        .Cast<Enum>()
-                        .Select(value => new
-                        {
-                            ((DescriptionAttribute)
-                                Attribute.GetCustomAttribute(value.GetType().GetField(value.ToString()),
-                                    typeof(DescriptionAttribute))).Description,
-                            value
-                        })
-                        .OrderBy(item => item.value)
-                        .ToList();
-                    uxImportTypeCmbo.DisplayMember = "Description";
-                    uxImportTypeCmbo.ValueMember = "value";
-                    break;
-                case 1:
-                    uxImportTypeCmbo.DataSource = Enum.GetValues(typeof(JonasImporterEnums.greatPlainsImportTypes))
+                    uxImportTypeCmbo.DataSource = Enum.GetValues(typeof(JonasImporterEnums.GreatPlainsImportTypes))
                         .Cast<Enum>()
                         .Select(value => new
                         {
@@ -455,8 +431,8 @@ namespace Jonas_Sage_Importer
                     uxImportTypeCmbo.DisplayMember = "Description";
                     uxImportTypeCmbo.ValueMember = "value";
                     break;
-                case 2:
-                    uxImportTypeCmbo.DataSource = Enum.GetValues(typeof(JonasImporterEnums.crmImportTypes))
+                case 1:
+                    uxImportTypeCmbo.DataSource = Enum.GetValues(typeof(JonasImporterEnums.CrmImportTypes))
                         .Cast<Enum>()
                         .Select(value => new
                         {
@@ -475,7 +451,7 @@ namespace Jonas_Sage_Importer
         private void uxImportSourceCmbo_SelectedIndexChanged(object sender, Telerik.WinControls.UI.Data.PositionChangedEventArgs e)
         {
             LoadImportTypeCmbo(uxImportSourceCmbo.SelectedIndex);
-            if (uxImportSourceCmbo.SelectedIndex == 1)
+            if (uxImportSourceCmbo.SelectedIndex == 0)
             {
                 uxRemoveNewerRecordsChk.Visible = true;
                 uxRemoveNewerRecordsDt.Visible = true;
@@ -539,6 +515,7 @@ namespace Jonas_Sage_Importer
         {
             uxRemoveNewerRecordsDt.Enabled = uxRemoveNewerRecordsChk.Checked;
         }
+
 
     }
 }

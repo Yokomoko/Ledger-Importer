@@ -3,8 +3,12 @@
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
     <DataSource Name="Embedded">
-      <DataSourceReference>/JonasDB</DataSourceReference>
-      <rd:SecurityType>None</rd:SecurityType>
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString>Data Source=.;Initial Catalog=Purchase_SaleLedger</ConnectString>
+        <IntegratedSecurity>true</IntegratedSecurity>
+      </ConnectionProperties>
+      <rd:SecurityType>Integrated</rd:SecurityType>
       <rd:DataSourceID>6c0d38fc-5911-4a35-a0b5-c53c61d91161</rd:DataSourceID>
     </DataSource>
   </DataSources>
@@ -18,12 +22,6 @@
           </QueryParameter>
           <QueryParameter Name="@DateOptions">
             <Value>=Parameters!DateOptions.Value</Value>
-          </QueryParameter>
-          <QueryParameter Name="@Source">
-            <Value>=Parameters!Source.Value</Value>
-          </QueryParameter>
-          <QueryParameter Name="@EntryType">
-            <Value>=Parameters!EntryType.Value</Value>
           </QueryParameter>
           <QueryParameter Name="@DateFrom">
             <Value>=Parameters!DateFrom.Value</Value>
@@ -66,25 +64,10 @@ UniqueId2
 from 
 	saleledgerextended
 where 
-	(@Source = 0 and 
-	ImportType = 'Sage' and
-	((@EntryType = 0 and [EntryType] in ('Invoice','Credit Note')) or (@EntryType = 1 and [EntryType] = 'Sales Order'))
-	and ((@DateOptions = 0 and Date between @DateFrom and @DateTo) or (@DateOptions = 1))
-	and ((@EntryType = 1 and DueDate &gt; '2015/01/01' or DueDate is null) or (@EntryType = 0)) 
-	and GL !=1) 
-	OR
-	(@Source = 1 and
 	ImportType = 'Great Plains' and
 	(@DateOptions = 0 and Date between @DateFrom and @DateTo or @DateOptions = 1) and
-	(@EntryType = 0 and EntryType in ('Invoice', 'Return') or @EntryType = 1 and EntryType in ('Sales Order')) and
-	((@EntryType = 1 and DueDate &gt; '2015/01/01' or DueDate is null) or @EntryType = 0)
-	and (CustRef is not null or CustRef != ''))
-	OR
-	(@Source = 2 and
-	ImportType = 'CRM' and
-	((@EntryType = 0 and [EntryType] = 'CRM Sales Order'))
-	and ((@DateOptions = 0 and Date between @DateFrom and @DateTo) or (@DateOptions = 1))
-	and (@EntryType = 0 and DueDate &gt; '2015/01/01' or DueDate is null))
+	EntryType in ('Invoice', 'Return')
+	and (CustRef is not null or CustRef != '')
 group by
 	UniqueID,
 	ItemDescription,
@@ -100,16 +83,13 @@ group by
 	MaintenanceType,
 	MaintTypeDescription,
 	ReportingDescription,
-CustOrderNo,
-CustName,
-SiteName,
-UniqueId2
+	CustOrderNo,
+	CustName,
+	SiteName,
+	UniqueId2
 order by 
 	DatePart(month,DueDate) + Datepart(yyyy,DueDate), 
-	Case 
-		when @Source = 0 and @EntryType = 1 then CustOrderNo
-		when @Source = 2 and @EntryType = 0 then CustOrderNo		
-		else InvoiceNo end Desc</CommandText>
+	InvoiceNo Desc</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
@@ -219,17 +199,10 @@ End</CommandText>
     <DataSet Name="LastImported">
       <Query>
         <DataSourceName>Embedded</DataSourceName>
-        <QueryParameters>
-          <QueryParameter Name="@EntryType">
-            <Value>=Parameters!EntryType.Value</Value>
-          </QueryParameter>
-        </QueryParameters>
         <CommandText>Select 
 	top 1 LogDate from 
 Log where 
-	((@EntryType = 1 and ImportType = 'Sales Order') or
-	(@EntryType = 0 and ImportType = 'Invoice (EPOS AR)') or
-	(@EntryType = 0 and ImportType = 'CRM Sales Order'))
+	ImportType = 'Invoice (EPOS AR)'
 order by LogDate Desc</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
@@ -243,17 +216,10 @@ order by LogDate Desc</CommandText>
     <DataSet Name="LastDate">
       <Query>
         <DataSourceName>Embedded</DataSourceName>
-        <QueryParameters>
-          <QueryParameter Name="@EntryType">
-            <Value>=Parameters!EntryType.Value</Value>
-          </QueryParameter>
-        </QueryParameters>
         <CommandText>Select 
 	top 1 Date from 
 SaleLedger where 
-	((@EntryType = 1 and Type = 'Sales Order') or
-	(@EntryType = 0 and Type = 'Invoice') or
-	(@EntryType = 0 and Type = 'CRM Sales Order'))
+	Type = 'Invoice'
 order by Date Desc</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
@@ -261,41 +227,6 @@ order by Date Desc</CommandText>
         <Field Name="Date">
           <DataField>Date</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
-        </Field>
-      </Fields>
-    </DataSet>
-    <DataSet Name="EntryType">
-      <Query>
-        <DataSourceName>Embedded</DataSourceName>
-        <QueryParameters>
-          <QueryParameter Name="@Source">
-            <Value>=Parameters!Source.Value</Value>
-          </QueryParameter>
-        </QueryParameters>
-        <CommandText>IF @Source = 0
-Begin
-Select 0 as No, 'Invoices' as Name
-Union
-Select 1 as No, 'Sales Order' as Name
-End
-IF @Source = 1
-Begin
-Select 0 as No, 'Invoices' as Name
-End
-IF @Source = 2
-Begin
-Select 0 as No, 'Sales Order' as Name
-End</CommandText>
-        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
-      </Query>
-      <Fields>
-        <Field Name="No">
-          <DataField>No</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Name">
-          <DataField>Name</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -334,7 +265,7 @@ End</CommandText>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>=IIF(Parameters!Source.Value = 0, "Sage", "Great Plains")</Value>
+                                <Value>Great Plains</Value>
                                 <Style>
                                   <FontFamily>Calibri</FontFamily>
                                   <FontWeight>Bold</FontWeight>
@@ -438,7 +369,7 @@ End</CommandText>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>=IIF(Parameters!Source.Value = 2, "Order No.", IIF(Parameters!EntryType.Value = 1, "Order No.", "Invoice No"))</Value>
+                                <Value>Invoice No</Value>
                                 <Style>
                                   <FontFamily>Calibri</FontFamily>
                                   <FontWeight>Bold</FontWeight>
@@ -514,55 +445,11 @@ End</CommandText>
                 <TablixColumn>
                   <Width>25mm</Width>
                 </TablixColumn>
-                <TablixColumn>
-                  <Width>25mm</Width>
-                </TablixColumn>
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
                   <Height>5.7mm</Height>
                   <TablixCells>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox40">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style>
-                                    <FontFamily>Calibri</FontFamily>
-                                    <FontSize>9pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox40</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <LeftBorder>
-                              <Style>None</Style>
-                            </LeftBorder>
-                            <RightBorder>
-                              <Style>None</Style>
-                            </RightBorder>
-                            <BackgroundColor>#e6c49b</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="Textbox33">
@@ -651,41 +538,6 @@ End</CommandText>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="DueDate">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!DueDate.Value</Value>
-                                  <Style>
-                                    <FontFamily>Calibri</FontFamily>
-                                    <FontSize>9pt</FontSize>
-                                    <Format>dd/MM/yyyy</Format>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>DueDate</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>#e9e9e9</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
                         <Textbox Name="Textbox22">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -763,41 +615,6 @@ End</CommandText>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox80">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Calibri</FontFamily>
-                                    <FontSize>8pt</FontSize>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox80</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>=IIF(RowNumber(Nothing) MOD 2, "#f2f2f2", "#e2edf7")</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
                         <Textbox Name="Textbox81">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -871,41 +688,6 @@ End</CommandText>
                 <TablixRow>
                   <Height>5mm</Height>
                   <TablixCells>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox42">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Calibri</FontFamily>
-                                    <FontSize>8pt</FontSize>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox42</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>=IIF(RowNumber(Nothing) MOD 2, "#f2f2f2", "#e2edf7")</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
                     <TablixCell>
                       <CellContents>
                         <Textbox Name="Textbox25">
@@ -985,41 +767,6 @@ End</CommandText>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox43">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style>
-                                    <FontFamily>Calibri</FontFamily>
-                                    <FontSize>9pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox43</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>#d9d9d9</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
                         <Textbox Name="Textbox26">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -1097,49 +844,6 @@ End</CommandText>
             <TablixColumnHierarchy>
               <TablixMembers>
                 <TablixMember>
-                  <TablixHeader>
-                    <Size>9.96875mm</Size>
-                    <CellContents>
-                      <Textbox Name="Textbox6">
-                        <CanGrow>true</CanGrow>
-                        <KeepTogether>true</KeepTogether>
-                        <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value>Due Date</Value>
-                                <Style>
-                                  <FontFamily>Calibri</FontFamily>
-                                  <FontWeight>Bold</FontWeight>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style>
-                              <TextAlign>Center</TextAlign>
-                            </Style>
-                          </Paragraph>
-                        </Paragraphs>
-                        <rd:DefaultName>Textbox6</rd:DefaultName>
-                        <Style>
-                          <Border>
-                            <Color>LightGrey</Color>
-                            <Style>Solid</Style>
-                          </Border>
-                          <BackgroundColor>#ddebf7</BackgroundColor>
-                          <VerticalAlign>Middle</VerticalAlign>
-                          <PaddingLeft>2pt</PaddingLeft>
-                          <PaddingRight>2pt</PaddingRight>
-                          <PaddingTop>2pt</PaddingTop>
-                          <PaddingBottom>2pt</PaddingBottom>
-                        </Style>
-                      </Textbox>
-                    </CellContents>
-                  </TablixHeader>
-                  <Visibility>
-                    <Hidden>=IIF(Parameters!EntryType.Value = 1, False, True)</Hidden>
-                  </Visibility>
-                </TablixMember>
-                <TablixMember>
                   <Group Name="JonasGroup">
                     <GroupExpressions>
                       <GroupExpression>=Fields!JonasGroup.Value</GroupExpression>
@@ -1193,7 +897,7 @@ End</CommandText>
                     </TablixMember>
                   </TablixMembers>
                   <Visibility>
-                    <Hidden>=IIF(Parameters!Source.Value = 1, False, Parameters!StartCollapsed.Value)</Hidden>
+                    <Hidden>true</Hidden>
                     <ToggleItem>Textbox202</ToggleItem>
                   </Visibility>
                 </TablixMember>
@@ -1236,63 +940,101 @@ End</CommandText>
                       </Textbox>
                     </CellContents>
                   </TablixHeader>
-                  <Visibility>
-                    <Hidden>=IIF(Parameters!Source.Value = 1, True, False)</Hidden>
-                  </Visibility>
                 </TablixMember>
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
               <TablixMembers>
                 <TablixMember>
-                  <Group Name="DueDate">
+                  <TablixHeader>
+                    <Size>138.62917mm</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox37">
+                        <CanGrow>true</CanGrow>
+                        <ToggleImage>
+                          <InitialState>true</InitialState>
+                        </ToggleImage>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>All Invoices</Value>
+                                <Style>
+                                  <FontFamily>Calibri</FontFamily>
+                                  <FontSize>9pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <rd:DefaultName>Textbox37</rd:DefaultName>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <RightBorder>
+                            <Style>None</Style>
+                          </RightBorder>
+                          <BackgroundColor>#e6c49b</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember />
+                  </TablixMembers>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="InvoiceNo">
                     <GroupExpressions>
-                      <GroupExpression>=IIF(isNothing(Fields!DueDate.Value) = True, Nothing, Month(Fields!DueDate.Value) &amp; Year(Fields!DueDate.Value))</GroupExpression>
+                      <GroupExpression>=Fields!InvoiceNo.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=IIF(isNothing(Fields!DueDate.Value) = True, Nothing, Month(Fields!DueDate.Value) &amp; Year(Fields!DueDate.Value))</Value>
+                      <Value>=Fields!InvoiceNo.Value</Value>
+                    </SortExpression>
+                    <SortExpression>
+                      <Value>=Fields!Date.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixMembers>
                     <TablixMember>
                       <TablixHeader>
-                        <Size>138.62917mm</Size>
+                        <Size>40.875mm</Size>
                         <CellContents>
-                          <Textbox Name="Textbox37">
+                          <Textbox Name="Textbox2">
                             <CanGrow>true</CanGrow>
-                            <ToggleImage>
-                              <InitialState>true</InitialState>
-                            </ToggleImage>
                             <KeepTogether>true</KeepTogether>
                             <Paragraphs>
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>=
-IIF(Parameters!EntryType.Value = 1, IIF(isNothing(Fields!DueDate.Value) = True, "No Due Date",
-MonthName(Month(Fields!DueDate.Value)) &amp; " " &amp; Year(Fields!DueDate.Value)), "All Invoices")</Value>
+                                    <Value>=Fields!CustRef.Value</Value>
                                     <Style>
                                       <FontFamily>Calibri</FontFamily>
                                       <FontSize>9pt</FontSize>
-                                      <FontWeight>Bold</FontWeight>
                                     </Style>
                                   </TextRun>
                                 </TextRuns>
                                 <Style />
                               </Paragraph>
                             </Paragraphs>
-                            <rd:DefaultName>Textbox37</rd:DefaultName>
+                            <rd:DefaultName>Textbox2</rd:DefaultName>
                             <Style>
                               <Border>
                                 <Color>LightGrey</Color>
                                 <Style>Solid</Style>
                               </Border>
-                              <RightBorder>
-                                <Style>None</Style>
-                              </RightBorder>
-                              <BackgroundColor>#e6c49b</BackgroundColor>
+                              <BackgroundColor>#e9e9e9</BackgroundColor>
                               <PaddingLeft>2pt</PaddingLeft>
                               <PaddingRight>2pt</PaddingRight>
                               <PaddingTop>2pt</PaddingTop>
@@ -1302,46 +1044,32 @@ MonthName(Month(Fields!DueDate.Value)) &amp; " " &amp; Year(Fields!DueDate.Value
                         </CellContents>
                       </TablixHeader>
                       <TablixMembers>
-                        <TablixMember />
-                      </TablixMembers>
-                    </TablixMember>
-                    <TablixMember>
-                      <Group Name="InvoiceNo">
-                        <GroupExpressions>
-                          <GroupExpression>=IIF(Parameters!Source.Value = 2, Fields!CustOrderNo.Value, IIF(Parameters!EntryType.Value = 1, Fields!CustOrderNo.Value, Fields!InvoiceNo.Value))</GroupExpression>
-                        </GroupExpressions>
-                      </Group>
-                      <SortExpressions>
-                        <SortExpression>
-                          <Value>=Fields!InvoiceNo.Value</Value>
-                        </SortExpression>
-                        <SortExpression>
-                          <Value>=Fields!Date.Value</Value>
-                        </SortExpression>
-                      </SortExpressions>
-                      <TablixMembers>
                         <TablixMember>
                           <TablixHeader>
-                            <Size>40.875mm</Size>
+                            <Size>49.07708mm</Size>
                             <CellContents>
-                              <Textbox Name="Textbox2">
+                              <Textbox Name="Textbox5">
                                 <CanGrow>true</CanGrow>
                                 <KeepTogether>true</KeepTogether>
                                 <Paragraphs>
                                   <Paragraph>
                                     <TextRuns>
                                       <TextRun>
-                                        <Value>=Fields!CustRef.Value</Value>
+                                        <Value>=Fields!CustName.Value</Value>
                                         <Style>
                                           <FontFamily>Calibri</FontFamily>
-                                          <FontSize>9pt</FontSize>
+                                          <FontSize>=Switch(
+Len(Fields!CustName.Value) &gt; 42, "6pt",
+Len(Fields!CustName.Value) &gt; 34, "7pt",
+Len(Fields!CustName.Value) &gt; 29, "8pt", 
+true, "9pt")</FontSize>
                                         </Style>
                                       </TextRun>
                                     </TextRuns>
                                     <Style />
                                   </Paragraph>
                                 </Paragraphs>
-                                <rd:DefaultName>Textbox2</rd:DefaultName>
+                                <rd:DefaultName>Textbox5</rd:DefaultName>
                                 <Style>
                                   <Border>
                                     <Color>LightGrey</Color>
@@ -1359,30 +1087,26 @@ MonthName(Month(Fields!DueDate.Value)) &amp; " " &amp; Year(Fields!DueDate.Value
                           <TablixMembers>
                             <TablixMember>
                               <TablixHeader>
-                                <Size>49.07708mm</Size>
+                                <Size>23.67709mm</Size>
                                 <CellContents>
-                                  <Textbox Name="Textbox5">
+                                  <Textbox Name="Textbox24">
                                     <CanGrow>true</CanGrow>
                                     <KeepTogether>true</KeepTogether>
                                     <Paragraphs>
                                       <Paragraph>
                                         <TextRuns>
                                           <TextRun>
-                                            <Value>=Fields!CustName.Value</Value>
+                                            <Value>=Fields!InvoiceNo.Value</Value>
                                             <Style>
                                               <FontFamily>Calibri</FontFamily>
-                                              <FontSize>=Switch(
-Len(Fields!CustName.Value) &gt; 42, "6pt",
-Len(Fields!CustName.Value) &gt; 34, "7pt",
-Len(Fields!CustName.Value) &gt; 29, "8pt", 
-true, "9pt")</FontSize>
+                                              <FontSize>9pt</FontSize>
                                             </Style>
                                           </TextRun>
                                         </TextRuns>
                                         <Style />
                                       </Paragraph>
                                     </Paragraphs>
-                                    <rd:DefaultName>Textbox5</rd:DefaultName>
+                                    <rd:DefaultName>Textbox24</rd:DefaultName>
                                     <Style>
                                       <Border>
                                         <Color>LightGrey</Color>
@@ -1400,26 +1124,27 @@ true, "9pt")</FontSize>
                               <TablixMembers>
                                 <TablixMember>
                                   <TablixHeader>
-                                    <Size>23.67709mm</Size>
+                                    <Size>25mm</Size>
                                     <CellContents>
-                                      <Textbox Name="Textbox24">
+                                      <Textbox Name="Textbox3">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=IIF(Parameters!Source.Value = 2, Fields!CustOrderNo.Value, IIF(Parameters!EntryType.Value = 1, Fields!CustOrderNo.Value, Fields!InvoiceNo.Value))</Value>
+                                                <Value>=Fields!Date.Value</Value>
                                                 <Style>
                                                   <FontFamily>Calibri</FontFamily>
                                                   <FontSize>9pt</FontSize>
+                                                  <Format>dd/MM/yyyy</Format>
                                                 </Style>
                                               </TextRun>
                                             </TextRuns>
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>Textbox24</rd:DefaultName>
+                                        <rd:DefaultName>Textbox3</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Color>LightGrey</Color>
@@ -1435,70 +1160,68 @@ true, "9pt")</FontSize>
                                     </CellContents>
                                   </TablixHeader>
                                   <TablixMembers>
-                                    <TablixMember>
-                                      <TablixHeader>
-                                        <Size>25mm</Size>
-                                        <CellContents>
-                                          <Textbox Name="Textbox3">
-                                            <CanGrow>true</CanGrow>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Paragraphs>
-                                              <Paragraph>
-                                                <TextRuns>
-                                                  <TextRun>
-                                                    <Value>=Fields!Date.Value</Value>
-                                                    <Style>
-                                                      <FontFamily>Calibri</FontFamily>
-                                                      <FontSize>9pt</FontSize>
-                                                      <Format>dd/MM/yyyy</Format>
-                                                    </Style>
-                                                  </TextRun>
-                                                </TextRuns>
-                                                <Style />
-                                              </Paragraph>
-                                            </Paragraphs>
-                                            <rd:DefaultName>Textbox3</rd:DefaultName>
-                                            <Style>
-                                              <Border>
-                                                <Color>LightGrey</Color>
-                                                <Style>Solid</Style>
-                                              </Border>
-                                              <BackgroundColor>#e9e9e9</BackgroundColor>
-                                              <PaddingLeft>2pt</PaddingLeft>
-                                              <PaddingRight>2pt</PaddingRight>
-                                              <PaddingTop>2pt</PaddingTop>
-                                              <PaddingBottom>2pt</PaddingBottom>
-                                            </Style>
-                                          </Textbox>
-                                        </CellContents>
-                                      </TablixHeader>
-                                      <TablixMembers>
-                                        <TablixMember />
-                                      </TablixMembers>
-                                    </TablixMember>
+                                    <TablixMember />
                                   </TablixMembers>
                                 </TablixMember>
                               </TablixMembers>
                             </TablixMember>
                           </TablixMembers>
                         </TablixMember>
+                      </TablixMembers>
+                    </TablixMember>
+                    <TablixMember>
+                      <Group Name="SiteName">
+                        <GroupExpressions>
+                          <GroupExpression>=Fields!SiteName.Value</GroupExpression>
+                        </GroupExpressions>
+                      </Group>
+                      <SortExpressions>
+                        <SortExpression>
+                          <Value>=Fields!SiteName.Value</Value>
+                        </SortExpression>
+                      </SortExpressions>
+                      <TablixMembers>
                         <TablixMember>
-                          <Group Name="SiteName">
-                            <GroupExpressions>
-                              <GroupExpression>=Fields!SiteName.Value</GroupExpression>
-                            </GroupExpressions>
-                          </Group>
-                          <SortExpressions>
-                            <SortExpression>
-                              <Value>=Fields!SiteName.Value</Value>
-                            </SortExpression>
-                          </SortExpressions>
+                          <TablixHeader>
+                            <Size>21.96042mm</Size>
+                            <CellContents>
+                              <Textbox Name="Textbox75">
+                                <CanGrow>true</CanGrow>
+                                <KeepTogether>true</KeepTogether>
+                                <Paragraphs>
+                                  <Paragraph>
+                                    <TextRuns>
+                                      <TextRun>
+                                        <Value />
+                                        <Style>
+                                          <FontFamily>Calibri</FontFamily>
+                                        </Style>
+                                      </TextRun>
+                                    </TextRuns>
+                                    <Style />
+                                  </Paragraph>
+                                </Paragraphs>
+                                <rd:DefaultName>Textbox75</rd:DefaultName>
+                                <Style>
+                                  <Border>
+                                    <Color>LightGrey</Color>
+                                    <Style>Solid</Style>
+                                  </Border>
+                                  <BackgroundColor>#f2f2f2</BackgroundColor>
+                                  <PaddingLeft>2pt</PaddingLeft>
+                                  <PaddingRight>2pt</PaddingRight>
+                                  <PaddingTop>2pt</PaddingTop>
+                                  <PaddingBottom>2pt</PaddingBottom>
+                                </Style>
+                              </Textbox>
+                            </CellContents>
+                          </TablixHeader>
                           <TablixMembers>
                             <TablixMember>
                               <TablixHeader>
-                                <Size>21.96042mm</Size>
+                                <Size>18.91458mm</Size>
                                 <CellContents>
-                                  <Textbox Name="Textbox75">
+                                  <Textbox Name="Textbox76">
                                     <CanGrow>true</CanGrow>
                                     <KeepTogether>true</KeepTogether>
                                     <Paragraphs>
@@ -1507,20 +1230,22 @@ true, "9pt")</FontSize>
                                           <TextRun>
                                             <Value />
                                             <Style>
+                                              <FontStyle>Italic</FontStyle>
                                               <FontFamily>Calibri</FontFamily>
+                                              <FontSize>8pt</FontSize>
                                             </Style>
                                           </TextRun>
                                         </TextRuns>
                                         <Style />
                                       </Paragraph>
                                     </Paragraphs>
-                                    <rd:DefaultName>Textbox75</rd:DefaultName>
+                                    <rd:DefaultName>Textbox76</rd:DefaultName>
                                     <Style>
                                       <Border>
                                         <Color>LightGrey</Color>
                                         <Style>Solid</Style>
                                       </Border>
-                                      <BackgroundColor>#f2f2f2</BackgroundColor>
+                                      <BackgroundColor>=IIF(RowNumber(Nothing) MOD 2, "#f2f2f2", "#e2edf7")</BackgroundColor>
                                       <PaddingLeft>2pt</PaddingLeft>
                                       <PaddingRight>2pt</PaddingRight>
                                       <PaddingTop>2pt</PaddingTop>
@@ -1532,9 +1257,9 @@ true, "9pt")</FontSize>
                               <TablixMembers>
                                 <TablixMember>
                                   <TablixHeader>
-                                    <Size>18.91458mm</Size>
+                                    <Size>49.07708mm</Size>
                                     <CellContents>
-                                      <Textbox Name="Textbox76">
+                                      <Textbox Name="Textbox77">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
@@ -1552,7 +1277,7 @@ true, "9pt")</FontSize>
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>Textbox76</rd:DefaultName>
+                                        <rd:DefaultName>Textbox77</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Color>LightGrey</Color>
@@ -1570,9 +1295,9 @@ true, "9pt")</FontSize>
                                   <TablixMembers>
                                     <TablixMember>
                                       <TablixHeader>
-                                        <Size>49.07708mm</Size>
+                                        <Size>23.67709mm</Size>
                                         <CellContents>
-                                          <Textbox Name="Textbox77">
+                                          <Textbox Name="Textbox78">
                                             <CanGrow>true</CanGrow>
                                             <KeepTogether>true</KeepTogether>
                                             <Paragraphs>
@@ -1590,7 +1315,7 @@ true, "9pt")</FontSize>
                                                 <Style />
                                               </Paragraph>
                                             </Paragraphs>
-                                            <rd:DefaultName>Textbox77</rd:DefaultName>
+                                            <rd:DefaultName>Textbox78</rd:DefaultName>
                                             <Style>
                                               <Border>
                                                 <Color>LightGrey</Color>
@@ -1608,9 +1333,9 @@ true, "9pt")</FontSize>
                                       <TablixMembers>
                                         <TablixMember>
                                           <TablixHeader>
-                                            <Size>23.67709mm</Size>
+                                            <Size>25mm</Size>
                                             <CellContents>
-                                              <Textbox Name="Textbox78">
+                                              <Textbox Name="Textbox79">
                                                 <CanGrow>true</CanGrow>
                                                 <KeepTogether>true</KeepTogether>
                                                 <Paragraphs>
@@ -1628,7 +1353,7 @@ true, "9pt")</FontSize>
                                                     <Style />
                                                   </Paragraph>
                                                 </Paragraphs>
-                                                <rd:DefaultName>Textbox78</rd:DefaultName>
+                                                <rd:DefaultName>Textbox79</rd:DefaultName>
                                                 <Style>
                                                   <Border>
                                                     <Color>LightGrey</Color>
@@ -1643,94 +1368,95 @@ true, "9pt")</FontSize>
                                               </Textbox>
                                             </CellContents>
                                           </TablixHeader>
-                                          <TablixMembers>
-                                            <TablixMember>
-                                              <TablixHeader>
-                                                <Size>25mm</Size>
-                                                <CellContents>
-                                                  <Textbox Name="Textbox79">
-                                                    <CanGrow>true</CanGrow>
-                                                    <KeepTogether>true</KeepTogether>
-                                                    <Paragraphs>
-                                                      <Paragraph>
-                                                        <TextRuns>
-                                                          <TextRun>
-                                                            <Value />
-                                                            <Style>
-                                                              <FontStyle>Italic</FontStyle>
-                                                              <FontFamily>Calibri</FontFamily>
-                                                              <FontSize>8pt</FontSize>
-                                                            </Style>
-                                                          </TextRun>
-                                                        </TextRuns>
-                                                        <Style />
-                                                      </Paragraph>
-                                                    </Paragraphs>
-                                                    <rd:DefaultName>Textbox79</rd:DefaultName>
-                                                    <Style>
-                                                      <Border>
-                                                        <Color>LightGrey</Color>
-                                                        <Style>Solid</Style>
-                                                      </Border>
-                                                      <BackgroundColor>=IIF(RowNumber(Nothing) MOD 2, "#f2f2f2", "#e2edf7")</BackgroundColor>
-                                                      <PaddingLeft>2pt</PaddingLeft>
-                                                      <PaddingRight>2pt</PaddingRight>
-                                                      <PaddingTop>2pt</PaddingTop>
-                                                      <PaddingBottom>2pt</PaddingBottom>
-                                                    </Style>
-                                                  </Textbox>
-                                                </CellContents>
-                                              </TablixHeader>
-                                            </TablixMember>
-                                          </TablixMembers>
                                         </TablixMember>
                                       </TablixMembers>
                                     </TablixMember>
                                   </TablixMembers>
                                 </TablixMember>
                               </TablixMembers>
-                              <Visibility>
-                                <Hidden>true</Hidden>
-                              </Visibility>
-                              <KeepWithGroup>After</KeepWithGroup>
                             </TablixMember>
+                          </TablixMembers>
+                          <Visibility>
+                            <Hidden>true</Hidden>
+                          </Visibility>
+                          <KeepWithGroup>After</KeepWithGroup>
+                        </TablixMember>
+                        <TablixMember>
+                          <Group Name="UniqueID">
+                            <GroupExpressions>
+                              <GroupExpression>=Fields!UniqueId2.Value</GroupExpression>
+                            </GroupExpressions>
+                          </Group>
+                          <SortExpressions>
+                            <SortExpression>
+                              <Value>=Fields!UniqueID.Value</Value>
+                            </SortExpression>
+                          </SortExpressions>
+                          <TablixHeader>
+                            <Size>40.875mm</Size>
+                            <CellContents>
+                              <Textbox Name="SiteName">
+                                <CanGrow>true</CanGrow>
+                                <KeepTogether>true</KeepTogether>
+                                <Paragraphs>
+                                  <Paragraph>
+                                    <TextRuns>
+                                      <TextRun>
+                                        <Value>=Fields!SiteName.Value</Value>
+                                        <Style>
+                                          <FontFamily>Calibri</FontFamily>
+                                        </Style>
+                                      </TextRun>
+                                    </TextRuns>
+                                    <Style />
+                                  </Paragraph>
+                                </Paragraphs>
+                                <rd:DefaultName>SiteName</rd:DefaultName>
+                                <Style>
+                                  <Border>
+                                    <Color>LightGrey</Color>
+                                    <Style>None</Style>
+                                  </Border>
+                                  <BackgroundColor>#f2f2f2</BackgroundColor>
+                                  <PaddingLeft>2pt</PaddingLeft>
+                                  <PaddingRight>2pt</PaddingRight>
+                                  <PaddingTop>2pt</PaddingTop>
+                                  <PaddingBottom>2pt</PaddingBottom>
+                                </Style>
+                              </Textbox>
+                            </CellContents>
+                          </TablixHeader>
+                          <TablixMembers>
                             <TablixMember>
-                              <Group Name="UniqueID">
-                                <GroupExpressions>
-                                  <GroupExpression>=Fields!UniqueId2.Value</GroupExpression>
-                                </GroupExpressions>
-                              </Group>
-                              <SortExpressions>
-                                <SortExpression>
-                                  <Value>=Fields!UniqueID.Value</Value>
-                                </SortExpression>
-                              </SortExpressions>
                               <TablixHeader>
-                                <Size>40.875mm</Size>
+                                <Size>97.75417mm</Size>
                                 <CellContents>
-                                  <Textbox Name="SiteName">
+                                  <Textbox Name="Textbox67">
                                     <CanGrow>true</CanGrow>
                                     <KeepTogether>true</KeepTogether>
                                     <Paragraphs>
                                       <Paragraph>
                                         <TextRuns>
                                           <TextRun>
-                                            <Value>=Fields!SiteName.Value</Value>
+                                            <Value>Further Information Unavailable.</Value>
                                             <Style>
+                                              <FontStyle>Italic</FontStyle>
                                               <FontFamily>Calibri</FontFamily>
+                                              <FontSize>8pt</FontSize>
                                             </Style>
                                           </TextRun>
                                         </TextRuns>
+                                        <LeftIndent>2pt</LeftIndent>
                                         <Style />
                                       </Paragraph>
                                     </Paragraphs>
-                                    <rd:DefaultName>SiteName</rd:DefaultName>
+                                    <rd:DefaultName>Textbox66</rd:DefaultName>
                                     <Style>
                                       <Border>
                                         <Color>LightGrey</Color>
-                                        <Style>None</Style>
+                                        <Style>Solid</Style>
                                       </Border>
-                                      <BackgroundColor>#f2f2f2</BackgroundColor>
+                                      <BackgroundColor>=IIF(RowNumber(Nothing) MOD 2, "#f2f2f2", "#e2edf7")</BackgroundColor>
                                       <PaddingLeft>2pt</PaddingLeft>
                                       <PaddingRight>2pt</PaddingRight>
                                       <PaddingTop>2pt</PaddingTop>
@@ -1740,64 +1466,21 @@ true, "9pt")</FontSize>
                                 </CellContents>
                               </TablixHeader>
                               <TablixMembers>
-                                <TablixMember>
-                                  <TablixHeader>
-                                    <Size>97.75417mm</Size>
-                                    <CellContents>
-                                      <Textbox Name="Textbox67">
-                                        <CanGrow>true</CanGrow>
-                                        <KeepTogether>true</KeepTogether>
-                                        <Paragraphs>
-                                          <Paragraph>
-                                            <TextRuns>
-                                              <TextRun>
-                                                <Value>=IIF(Parameters!Source.Value = 1, "Further Information Unavailable for this Source.", Fields!ItemDescription.Value)</Value>
-                                                <Style>
-                                                  <FontStyle>Italic</FontStyle>
-                                                  <FontFamily>Calibri</FontFamily>
-                                                  <FontSize>8pt</FontSize>
-                                                </Style>
-                                              </TextRun>
-                                            </TextRuns>
-                                            <LeftIndent>2pt</LeftIndent>
-                                            <ListStyle>Bulleted</ListStyle>
-                                            <ListLevel>1</ListLevel>
-                                            <Style />
-                                          </Paragraph>
-                                        </Paragraphs>
-                                        <rd:DefaultName>Textbox66</rd:DefaultName>
-                                        <Style>
-                                          <Border>
-                                            <Color>LightGrey</Color>
-                                            <Style>Solid</Style>
-                                          </Border>
-                                          <BackgroundColor>=IIF(RowNumber(Nothing) MOD 2, "#f2f2f2", "#e2edf7")</BackgroundColor>
-                                          <PaddingLeft>2pt</PaddingLeft>
-                                          <PaddingRight>2pt</PaddingRight>
-                                          <PaddingTop>2pt</PaddingTop>
-                                          <PaddingBottom>2pt</PaddingBottom>
-                                        </Style>
-                                      </Textbox>
-                                    </CellContents>
-                                  </TablixHeader>
-                                  <TablixMembers>
-                                    <TablixMember />
-                                  </TablixMembers>
-                                </TablixMember>
+                                <TablixMember />
                               </TablixMembers>
-                              <Visibility>
-                                <Hidden>=Parameters!StartCollapsed.Value</Hidden>
-                                <ToggleItem>Textbox24</ToggleItem>
-                              </Visibility>
                             </TablixMember>
                           </TablixMembers>
+                          <Visibility>
+                            <Hidden>=Parameters!StartCollapsed.Value</Hidden>
+                            <ToggleItem>Textbox24</ToggleItem>
+                          </Visibility>
                         </TablixMember>
                       </TablixMembers>
-                      <Visibility>
-                        <ToggleItem>Textbox37</ToggleItem>
-                      </Visibility>
                     </TablixMember>
                   </TablixMembers>
+                  <Visibility>
+                    <ToggleItem>Textbox37</ToggleItem>
+                  </Visibility>
                 </TablixMember>
                 <TablixMember>
                   <TablixHeader>
@@ -1846,10 +1529,7 @@ true, "9pt")</FontSize>
             <Top>0mm</Top>
             <Left>1.02658mm</Left>
             <Height>37.66875mm</Height>
-            <Width>213.62917mm</Width>
-            <Visibility>
-              <Hidden>=IIF(Parameters!Source.Value = 2, IIF(Parameters!DatabaseVersion.Value = 1.5, true, false), false)</Hidden>
-            </Visibility>
+            <Width>188.62917mm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1864,7 +1544,7 @@ true, "9pt")</FontSize>
           </Border>
         </Style>
       </Body>
-      <Width>216.37241mm</Width>
+      <Width>201.82033mm</Width>
       <Page>
         <PageHeader>
           <Height>18.7mm</Height>
@@ -1875,35 +1555,6 @@ true, "9pt")</FontSize>
               <CanGrow>true</CanGrow>
               <KeepTogether>true</KeepTogether>
               <Paragraphs>
-                <Paragraph>
-                  <TextRuns>
-                    <TextRun>
-                      <Value>=Parameters!Source.Label</Value>
-                      <Style>
-                        <FontFamily>Segoe UI</FontFamily>
-                        <FontSize>9pt</FontSize>
-                        <Format>dd/MM/yyyy</Format>
-                      </Style>
-                    </TextRun>
-                    <TextRun>
-                      <Value> - </Value>
-                      <Style>
-                        <FontFamily>Segoe UI</FontFamily>
-                        <FontSize>9pt</FontSize>
-                        <Format>dd/MM/yyyy</Format>
-                      </Style>
-                    </TextRun>
-                    <TextRun>
-                      <Value>=Parameters!EntryType.Label</Value>
-                      <Style>
-                        <FontFamily>Segoe UI</FontFamily>
-                        <FontSize>9pt</FontSize>
-                        <Format>dd/MM/yyyy</Format>
-                      </Style>
-                    </TextRun>
-                  </TextRuns>
-                  <Style />
-                </Paragraph>
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
@@ -1972,19 +1623,6 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>Report Type</Value>
-                      <Style>
-                        <FontFamily>Segoe UI</FontFamily>
-                        <FontSize>9pt</FontSize>
-                        <FontWeight>Bold</FontWeight>
-                      </Style>
-                    </TextRun>
-                  </TextRuns>
-                  <Style />
-                </Paragraph>
-                <Paragraph>
-                  <TextRuns>
-                    <TextRun>
                       <Value>Date:</Value>
                       <Style>
                         <FontFamily>Segoe UI</FontFamily>
@@ -1998,25 +1636,7 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>Last Imported (</Value>
-                      <Style>
-                        <FontFamily>Segoe UI</FontFamily>
-                        <FontSize>9pt</FontSize>
-                        <FontWeight>Bold</FontWeight>
-                        <Color>Red</Color>
-                      </Style>
-                    </TextRun>
-                    <TextRun>
-                      <Value>=Parameters!EntryType.Label</Value>
-                      <Style>
-                        <FontFamily>Segoe UI</FontFamily>
-                        <FontSize>9pt</FontSize>
-                        <FontWeight>Bold</FontWeight>
-                        <Color>Red</Color>
-                      </Style>
-                    </TextRun>
-                    <TextRun>
-                      <Value>):</Value>
+                      <Value>Last Imported:</Value>
                       <Style>
                         <FontFamily>Segoe UI</FontFamily>
                         <FontSize>9pt</FontSize>
@@ -2030,25 +1650,7 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>Last Entry: (</Value>
-                      <Style>
-                        <FontFamily>Segoe UI</FontFamily>
-                        <FontSize>9pt</FontSize>
-                        <FontWeight>Bold</FontWeight>
-                        <Color>Red</Color>
-                      </Style>
-                    </TextRun>
-                    <TextRun>
-                      <Value>=Parameters!EntryType.Label</Value>
-                      <Style>
-                        <FontFamily>Segoe UI</FontFamily>
-                        <FontSize>9pt</FontSize>
-                        <FontWeight>Bold</FontWeight>
-                        <Color>Red</Color>
-                      </Style>
-                    </TextRun>
-                    <TextRun>
-                      <Value>):</Value>
+                      <Value>Last Entry:</Value>
                       <Style>
                         <FontFamily>Segoe UI</FontFamily>
                         <FontSize>9pt</FontSize>
@@ -2221,47 +1823,6 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
     </ReportSection>
   </ReportSections>
   <ReportParameters>
-    <ReportParameter Name="Source">
-      <DataType>Integer</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>=IIF(Today() &lt; DateValue("May 04, 2016"), 0, 1)</Value>
-        </Values>
-      </DefaultValue>
-      <Prompt>Source: </Prompt>
-      <ValidValues>
-        <ParameterValues>
-          <ParameterValue>
-            <Value>0</Value>
-            <Label>Sage</Label>
-          </ParameterValue>
-          <ParameterValue>
-            <Value>1</Value>
-            <Label>Great Plains</Label>
-          </ParameterValue>
-          <ParameterValue>
-            <Value>2</Value>
-            <Label>CRM</Label>
-          </ParameterValue>
-        </ParameterValues>
-      </ValidValues>
-    </ReportParameter>
-    <ReportParameter Name="EntryType">
-      <DataType>Integer</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>=IIF(Parameters!Source.Value = 0, 1,0)</Value>
-        </Values>
-      </DefaultValue>
-      <Prompt>Invoice/SalesOrder</Prompt>
-      <ValidValues>
-        <DataSetReference>
-          <DataSetName>EntryType</DataSetName>
-          <ValueField>No</ValueField>
-          <LabelField>Name</LabelField>
-        </DataSetReference>
-      </ValidValues>
-    </ReportParameter>
     <ReportParameter Name="ValueOption">
       <DataType>Integer</DataType>
       <DefaultValue>
@@ -2401,6 +1962,5 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
     </ReportParameter>
   </ReportParameters>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>
-  <rd:ReportServerUrl>http://192.168.15.48/reportserver</rd:ReportServerUrl>
   <rd:ReportID>ce57d758-16ad-4fd0-9074-51e050b97e74</rd:ReportID>
 </Report>

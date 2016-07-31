@@ -16,7 +16,7 @@ namespace SageImporterLibrary
 {
     public class ExcelImport
     {
-        private static int columnSize = 17;
+        private static int columnSize = 21;
         //private static bool populateSuccess;
 
         public static int ColumnSize()
@@ -226,16 +226,13 @@ namespace SageImporterLibrary
                 return dTableClone;
 
             }
-            if (columnSize > originalSize)
+            if (columnSize >= originalSize) return dTable;
+            MessageBox.Show($"There were {columnSize} columns expected but there were actually {originalSize}." +
+                            $"Extra columns will be automatically removed from the end.\n Please ensure that you have selected " +
+                            $"the correct spreadsheet.");
+            while (dTable.Columns.Count > columnSize)
             {
-                MessageBox.Show($"There were {columnSize} columns expected but there were actually {originalSize}." +
-                                $"Extra columns will be automatically removed from the end.\n Please ensure that you have selected " +
-                                $"the correct spreadsheet.");
-                while (dTable.Columns.Count > columnSize)
-                {
-                    dTable.Columns.RemoveAt(columnSize);
-                }
-                
+                dTable.Columns.RemoveAt(columnSize);
             }
             return dTable;
         }
