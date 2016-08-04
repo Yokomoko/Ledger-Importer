@@ -26,7 +26,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <PublisherName>Eposgroup</PublisherName>
-    <ApplicationRevision>23</ApplicationRevision>
+    <ApplicationRevision>24</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -240,6 +240,9 @@
       <DependentUpon>ReportViewer.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
+    <None Include="Excel Reports\CSS.xlsx" />
+    <None Include="Excel Reports\Epos AR.xlsx" />
+    <None Include="Excel Reports\Outstanding Invoices .xlsx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -259,6 +262,11 @@
     <None Include="Resources\Ace.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="SSRS Reports\Customer Statement.rdl" />
+    <None Include="SSRS Reports\Invoices Posted to P and L.rdl" />
+    <None Include="SSRS Reports\Raised Invoices.rdl" />
+    <None Include="SSRS Reports\Sales Backlog and Raised Invoices.rdl" />
+    <None Include="SSRS Reports\Sales Backlog.rdl" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Jonas Importer Tool.ico" />

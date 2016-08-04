@@ -188,9 +188,12 @@ namespace Jonas_Sage_Importer {
             else {
                 using (SqlConnection sqconnother = new SqlConnection(ConnectionString())) {
                     using (SqlCommand sqcomm = new SqlCommand(comm, sqconnother)) {
+                        sqcomm.Connection = sqconnother;
+                        sqcomm.CommandType = CommandType.StoredProcedure;
                         sqcomm.Parameters.AddWithValue("@tblLedger", tbl);
                         sqcomm.CommandText = command;
                         sqconnother.Open();
+                        //statusStripBar.Text = "Attempting to import to temporary table.";
                         sqcomm.ExecuteNonQuery();
                     }
                     string tempSuccess =

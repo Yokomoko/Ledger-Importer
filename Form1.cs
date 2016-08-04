@@ -48,10 +48,8 @@ namespace Jonas_Sage_Importer
         private void ImportFromGridView(RadDropDownList importSource)
         {
             if (importSource == null) throw new ArgumentNullException(nameof(importSource));
-            var attempting = "Attempting to Import";
-            var failed = "Failed to Import";
-            var gridProcedureName = String.Empty;
-            var tempProcedureName = String.Empty;
+            var gridProcedureName = string.Empty;
+            var tempProcedureName = string.Empty;
 
             #region GreatPlains
             if (importSource.SelectedIndex == 0)
