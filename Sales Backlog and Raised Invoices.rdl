@@ -1237,7 +1237,10 @@ End</CommandText>
                     </CellContents>
                   </TablixHeader>
                   <Visibility>
-                    <Hidden>=IIF(Parameters!Source.Value = 1, True, False)</Hidden>
+                    <Hidden>=SWITCH(
+Parameters!Source.Value = 1, True, 
+Parameters!Source.Value = 3, True, 
+True, False)</Hidden>
                   </Visibility>
                 </TablixMember>
               </TablixMembers>
