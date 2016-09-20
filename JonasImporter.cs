@@ -70,81 +70,29 @@ namespace Jonas_Sage_Importer {
                             LogToText.WriteToLog(
                                 $"{ImpName}: Attempting to import row {tbl.Rows.IndexOf(dr)} to temporary table in the database");
 
-                            var minicol = 14;
-                            var ddcol = 20;
-                            switch (dr[minicol].ToString().Trim().ToLower()) {
-                                case "0":
-                                    break;
-                                case "1":
-                                    break;
-                                case "2":
-                                    break;
-                                case "3":
-                                    break;
-                                case "4":
-                                    break;
-                                case "-":
-                                    dr[minicol] = 0;
-                                    break;
-                                case ".":
-                                    dr[minicol] = 0;
-                                    break;
-                                case "n/a":
-                                    dr[minicol] = 0;
-                                    break;
-                                case "no":
-                                    dr[minicol] = 0;
-                                    break;
-                                case "pending":
-                                    dr[minicol] = 1;
-                                    break;
-                                case "chasing":
-                                    dr[minicol] = 2;
-                                    break;
-                                case "yes":
-                                    dr[minicol] = 3;
-                                    break;
-                                default:
-                                    dr[minicol] = 4;
-                                    break;
+                            const int minicol = 14;
+                            const int ddcol = 20;
+                            const int tillTypeCol = 21;
+                            const int adminStatusCol = 22;
+
+                            if (tbl.Columns.Count >= 21) {
+                                //MiniPack coll from text to int
+                                dr[minicol] = ConvertImportTextToInt(minicol, dr[ddcol].ToString().Trim().ToLower());
+                                //DirectDebit from text to int
+                                dr[ddcol] = ConvertImportTextToInt(ddcol, dr[ddcol].ToString().Trim().ToLower());
                             }
-                            //DirectDebit from text to int
-                            switch (dr[ddcol].ToString().Trim().ToLower()) {
-                                case "0":
-                                    break;
-                                case "1":
-                                    break;
-                                case "2":
-                                    break;
-                                case "3":
-                                    break;
-                                case "4":
-                                    break;
-                                case "-":
-                                    dr[ddcol] = 0;
-                                    break;
-                                case ".":
-                                    dr[ddcol] = 0;
-                                    break;
-                                case "n/a":
-                                    dr[ddcol] = 0;
-                                    break;
-                                case "no":
-                                    dr[ddcol] = 0;
-                                    break;
-                                case "pending":
-                                    dr[ddcol] = 1;
-                                    break;
-                                case "chasing":
-                                    dr[ddcol] = 2;
-                                    break;
-                                case "yes":
-                                    dr[ddcol] = 3;
-                                    break;
-                                default:
-                                    dr[ddcol] = 4;
-                                    break;
+
+                            //Till Type from text to int
+                            if (tbl.Columns.Count >= 22) {
+                                dr[tillTypeCol] = ConvertImportTextToInt(tillTypeCol,
+                                    dr[tillTypeCol].ToString().Trim().ToLower());
                             }
+                            //Admin Status from text to int
+                            if (tbl.Columns.Count >= 23) {
+                                dr[adminStatusCol] = ConvertImportTextToInt(adminStatusCol,
+                                    dr[adminStatusCol].ToString().Trim().ToLower());
+                            }
+                            //start importing
                             sqcomm.CommandType = CommandType.StoredProcedure;
                             sqcomm.Parameters.AddWithValue("@Date", dr[0]);
                             sqcomm.Parameters.AddWithValue("@CustName", dr[1]);
@@ -160,27 +108,28 @@ namespace Jonas_Sage_Importer {
                             sqcomm.Parameters.AddWithValue("@Profit", dr[11]);
                             sqcomm.Parameters.AddWithValue("@Currency", dr[12]);
                             sqcomm.Parameters.AddWithValue("@CustOrderNo", dr[13]);
-                                if (tbl.Columns.Count >= 21) {
-                                    comm = "CRM_Grid_ImportOrders_Adv";
-                                    sqcomm.Parameters.AddWithValue("@MiniPack", dr[14]);
-                                    sqcomm.Parameters.AddWithValue("@SiteSurveyDate", dr[15]);
-                                    sqcomm.Parameters.AddWithValue("@BacklogComments", dr[16]);
-                                    sqcomm.Parameters.AddWithValue("@Deposit", dr[17]);
-                                    sqcomm.Parameters.AddWithValue("@AssignedTo", dr[18]);
-                                    sqcomm.Parameters.AddWithValue("@MegJobNo", dr[19]);
-                                    sqcomm.Parameters.AddWithValue("@DirectDebit", dr[20]);
-                                }
-                                if (tbl.Columns.Count == 22) {
-                                    comm = "CRM_Grid_ImportOrders_Adv2";
-                                    sqcomm.Parameters.AddWithValue("@Spare1", dr[21]);
-                                }
-                                if (tbl.Columns.Count == 23) {
-                                    comm = "CRM_Grid_ImportOrders_Adv3";
-                                    sqcomm.Parameters.AddWithValue("@Spare2", dr[22]);
-                                }
-                                sqcomm.CommandText = comm;
-                                sqconn.Open();
-                                sqcomm.ExecuteNonQuery();
+                            if (tbl.Columns.Count >= 21) {
+                                comm = "CRM_Grid_ImportOrders_Adv";
+                                sqcomm.Parameters.AddWithValue("@MiniPack", dr[14]);
+                                sqcomm.Parameters.AddWithValue("@SiteSurveyDate", dr[15]);
+                                sqcomm.Parameters.AddWithValue("@BacklogComments", dr[16]);
+                                sqcomm.Parameters.AddWithValue("@Deposit", dr[17]);
+                                sqcomm.Parameters.AddWithValue("@AssignedTo", dr[18]);
+                                sqcomm.Parameters.AddWithValue("@MegJobNo", dr[19]);
+                                sqcomm.Parameters.AddWithValue("@DirectDebit", dr[20]);
+                            }
+                            if (tbl.Columns.Count == 22) {
+                                comm = "CRM_Grid_ImportOrders_Adv2";
+                                sqcomm.Parameters.AddWithValue("@Spare1", dr[21]);
+                            }
+                            if (tbl.Columns.Count == 23) {
+                                comm = "CRM_Grid_ImportOrders_Adv3";
+                                sqcomm.Parameters.AddWithValue("@Spare1", dr[21]); //Till Type
+                                sqcomm.Parameters.AddWithValue("@Spare2", dr[22]); //Admin Status
+                            }
+                            sqcomm.CommandText = comm;
+                            sqconn.Open();
+                            sqcomm.ExecuteNonQuery();
                         }
                     }
                 }
@@ -224,6 +173,115 @@ namespace Jonas_Sage_Importer {
                 LogToText.WriteToLog(commitFailure);
                 MessageBox.Show(commitFailure, @"Failed");
             }
+        }
+
+        private static int? ConvertImportTextToInt(int columnNumber, string input) {
+            int? output = null;
+
+            #region MiniPack and DirectDebit (14 & 20)
+            //MiniPack or DirectDebit Columns
+            if (columnNumber == 14 || columnNumber == 20) {
+                switch (input) {
+                    case "-":
+                    case "0":
+                    case ".":
+                    case "n/a":
+                        output = 0;
+                        break;
+                    case "pending":
+                    case "1":
+                        output = 1;
+                        break;
+                    case "chasing":
+                    case "2":
+                        output = 2;
+                        break;
+                    case "yes":
+                    case "3":
+                        output = 3;
+                        break;
+                    case "no":
+                    case "4":
+                        output = 4;
+                        break;
+                    default:
+                        output = -1;
+                        break;
+                }
+            }
+            #endregion
+            #region Till Type (21)
+
+            if (columnNumber == 21) {
+                switch (input.Replace(" ", "")) {
+                    case "quantum":
+                    case "0":
+                        output = 0;
+                        break;
+                    case "pixel":
+                    case "1":
+                        output = 1;
+                        break;
+                    case "absolute":
+                    case "2":
+                        output = 2;
+                        break;
+                    case "fashionmaster":
+                    case "3":
+                        output = 3;
+                        break;
+                    default:
+                        output = -1;
+                        break;
+                }
+            }
+
+            #endregion
+            #region Admin Status (22)
+
+            if (columnNumber == 22) {
+                switch (input) {
+                    case "created":
+                    case "0":
+                        output = 0;
+                        break;
+                    case "pending":
+                    case "1":
+                        output = 1;
+                        break;
+                    case "approved":
+                    case "2":
+                        output = 2;
+                        break;
+                    case "pending cancelled":
+                    case "3":
+                        output = 3;
+                        break;
+                    case "pending invoice":
+                    case "4":
+                        output = 4;
+                        break;
+                    case "invoiced":
+                    case "5":
+                        output = 5;
+                        break;
+                    case "pending approval":
+                    case "6":
+                        output = 6;
+                        break;
+                    case "stuck":
+                    case "7":
+                        output = 7;
+                        break;
+                    default:
+                        output = -1;
+                        break;
+                }
+            }
+
+            #endregion 
+
+            return output;
         }
 
         public static void DeletePreviousOrders(string ImpName) {
