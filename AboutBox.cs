@@ -12,7 +12,7 @@ namespace Jonas_Sage_Importer
             InitializeComponent();
             Text = String.Format("About {0}", AssemblyTitle);
             labelProductName.Text = AssemblyProduct;
-            labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
+            labelVersion.Text = $"Version {AssemblyVersion} ({GetBuildDate()})";
             labelCopyright.Text = AssemblyCopyright;
             labelCompanyName.Text = AssemblyCompany;
             textBoxDescription.Text = AssemblyDescription;
@@ -97,5 +97,20 @@ namespace Jonas_Sage_Importer
             }
         }
         #endregion
+
+        private void AboutBox_Load(object sender, EventArgs e) {
+
+        }
+
+
+        private DateTime GetBuildDate() {
+            var origDate = new DateTime(2000,1,1);
+
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            var buildDate = origDate.AddDays(version.Build).AddSeconds(version.Revision * 2);
+            
+
+            return buildDate;
+        }
     }
 }

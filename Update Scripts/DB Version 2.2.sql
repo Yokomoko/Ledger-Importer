@@ -1,5 +1,4 @@
-
-
+USE Purchase_SaleLedger
 
 Print 'Fix Advanced Import Procedure 2 for OpenCRM Import'
 IF EXISTS ( SELECT * FROM   sysobjects WHERE  id = object_id(N'[dbo].[CRM_Grid_ImportOrders_Adv2]')  and OBJECTPROPERTY(id, N'IsProcedure') = 1 )
@@ -40,12 +39,13 @@ Declare @FinalResult int
 
 
 Insert into Temp_OrderLedger (Date, CustName, SiteName, CustRef, DueDate, Category, ItemDescription, Qty, Net, Tax, Gross, Profit, Currency, CustOrderNo, MiniPack, SiteSurveyDate, BacklogComments, Deposit, AssignedTo, MegJobNo, DirectDebit, Spare1)
-VALUES (@Date, @SiteName, @CustName, @CustRef, @DueDate, @Category, @ItemDescription, @Qty, @Net, @Tax, @Gross, @Profit, @Currency, @CustOrderNo, @MiniPack, @SiteSurveyDate, @BacklogComments, @Deposit, @AssignedTo, @MegJobNo, @DirectDebit, @Spare1)
+VALUES (@Date, @CustName, SiteName, @CustRef, @DueDate, @Category, @ItemDescription, @Qty, @Net, @Tax, @Gross, @Profit, @Currency, @CustOrderNo, @MiniPack, @SiteSurveyDate, @BacklogComments, @Deposit, @AssignedTo, @MegJobNo, @DirectDebit, @Spare1)
 
 
 End
 
 GO
+USE Purchase_SaleLedger
 
 Print 'Fix Advanced Import Procedure 3 for OpenCRM Import'
 IF EXISTS ( SELECT * FROM   sysobjects WHERE  id = object_id(N'[dbo].[CRM_Grid_ImportOrders_Adv3]')  and OBJECTPROPERTY(id, N'IsProcedure') = 1 )
@@ -86,7 +86,7 @@ Declare @TempResult int
 Declare @FinalResult int
 
 Insert into Temp_OrderLedger (Date, CustName, SiteName, CustRef, DueDate, Category, ItemDescription, Qty, Net, Tax, Gross, Profit, Currency, CustOrderNo, MiniPack, SiteSurveyDate, BacklogComments, Deposit, AssignedTo, MegJobNo, DirectDebit, Spare1, Spare2)
-VALUES (@Date, @SiteName, @CustName, @CustRef, @DueDate, @Category, @ItemDescription, @Qty, @Net, @Tax, @Gross, @Profit, @Currency, @CustOrderNo, @MiniPack, @SiteSurveyDate, @BacklogComments, @Deposit, @AssignedTo, @MegJobNo, @DirectDebit, @Spare1, @Spare2)
+VALUES (@Date, @CustName, @SiteName, @CustRef, @DueDate, @Category, @ItemDescription, @Qty, @Net, @Tax, @Gross, @Profit, @Currency, @CustOrderNo, @MiniPack, @SiteSurveyDate, @BacklogComments, @Deposit, @AssignedTo, @MegJobNo, @DirectDebit, @Spare1, @Spare2)
 
 
 End
@@ -94,7 +94,7 @@ End
 GO
 
 
-
+USE Purchase_SaleLedger
 --This should always be at the bottom
 Print ''
 Declare @Version varchar(3) = (Select top 1 ConfigSetting from Configuration where Label = 'DbVersion')

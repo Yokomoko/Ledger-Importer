@@ -44,6 +44,8 @@ namespace Jonas_Sage_Importer
             this.customerLedgerByGroupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.invoicesPostedToPAndLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.customerStatementToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.salesBacklogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.raisedInvoicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.configurationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nominalCodeEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.jonasGroupEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,8 +70,7 @@ namespace Jonas_Sage_Importer
             this.uxImportSourceCmbo = new Telerik.WinControls.UI.RadDropDownList();
             this.uxExcelWorksheetCmbo = new Telerik.WinControls.UI.RadDropDownList();
             this.office2010SilverTheme1 = new Telerik.WinControls.Themes.Office2010SilverTheme();
-            this.salesBacklogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.raisedInvoicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.StatusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uxExcelSheetViewerGv)).BeginInit();
@@ -169,6 +170,20 @@ namespace Jonas_Sage_Importer
             this.customerStatementToolStripMenuItem.Text = "Customer Statement";
             this.customerStatementToolStripMenuItem.Click += new System.EventHandler(this.customerStatementToolStripMenuItem_Click);
             // 
+            // salesBacklogToolStripMenuItem
+            // 
+            this.salesBacklogToolStripMenuItem.Name = "salesBacklogToolStripMenuItem";
+            this.salesBacklogToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
+            this.salesBacklogToolStripMenuItem.Text = "Sales Backlog";
+            this.salesBacklogToolStripMenuItem.Click += new System.EventHandler(this.salesBacklogToolStripMenuItem_Click);
+            // 
+            // raisedInvoicesToolStripMenuItem
+            // 
+            this.raisedInvoicesToolStripMenuItem.Name = "raisedInvoicesToolStripMenuItem";
+            this.raisedInvoicesToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
+            this.raisedInvoicesToolStripMenuItem.Text = "Raised Invoices";
+            this.raisedInvoicesToolStripMenuItem.Click += new System.EventHandler(this.raisedInvoicesToolStripMenuItem_Click);
+            // 
             // configurationToolStripMenuItem
             // 
             this.configurationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -204,6 +219,7 @@ namespace Jonas_Sage_Importer
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.changeLogToolStripMenuItem,
+            this.checkForUpdatesToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -213,13 +229,13 @@ namespace Jonas_Sage_Importer
             // 
             this.changeLogToolStripMenuItem.Enabled = false;
             this.changeLogToolStripMenuItem.Name = "changeLogToolStripMenuItem";
-            this.changeLogToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.changeLogToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.changeLogToolStripMenuItem.Text = "Change Log";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItemClick);
             // 
@@ -384,19 +400,12 @@ namespace Jonas_Sage_Importer
             this.uxExcelWorksheetCmbo.Size = new System.Drawing.Size(240, 20);
             this.uxExcelWorksheetCmbo.TabIndex = 68;
             // 
-            // salesBacklogToolStripMenuItem
+            // checkForUpdatesToolStripMenuItem
             // 
-            this.salesBacklogToolStripMenuItem.Name = "salesBacklogToolStripMenuItem";
-            this.salesBacklogToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
-            this.salesBacklogToolStripMenuItem.Text = "Sales Backlog";
-            this.salesBacklogToolStripMenuItem.Click += new System.EventHandler(this.salesBacklogToolStripMenuItem_Click);
-            // 
-            // raisedInvoicesToolStripMenuItem
-            // 
-            this.raisedInvoicesToolStripMenuItem.Name = "raisedInvoicesToolStripMenuItem";
-            this.raisedInvoicesToolStripMenuItem.Size = new System.Drawing.Size(281, 22);
-            this.raisedInvoicesToolStripMenuItem.Text = "Raised Invoices";
-            this.raisedInvoicesToolStripMenuItem.Click += new System.EventHandler(this.raisedInvoicesToolStripMenuItem_Click);
+            this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
+            this.checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.checkForUpdatesToolStripMenuItem.Text = "Check For Updates";
+            this.checkForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -484,6 +493,7 @@ namespace Jonas_Sage_Importer
         private Telerik.WinControls.Themes.Office2010SilverTheme office2010SilverTheme1;
         private ToolStripMenuItem salesBacklogToolStripMenuItem;
         private ToolStripMenuItem raisedInvoicesToolStripMenuItem;
+        private ToolStripMenuItem checkForUpdatesToolStripMenuItem;
     }
 }
 
