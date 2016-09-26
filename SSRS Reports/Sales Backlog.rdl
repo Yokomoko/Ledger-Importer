@@ -37,103 +37,145 @@
           <QueryParameter Name="@Search">
             <Value>=Parameters!Search.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@TerminalTypes">
+            <Value>=Parameters!TerminalTypes.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@AdminStatuses">
+            <Value>=Parameters!AdminStatuses.Value</Value>
+          </QueryParameter>
         </QueryParameters>
-        <CommandText>select 
-	UniqueID,
-	Date,
-	CustRef,
-	CustName,
-	SiteName,
-	Case when DatePart(year,DueDate) = 1999 then null else DueDate End as DueDate,
-	GL,
-	GLDescription,
-	JonasGroup,
-	JonasGroupName,
-	MaintenanceType,
-	MaintTypeDescription,
-	ReportingDescription,
-	ItemDescription,
-	Case @ValueOption
-		when 0 then SUM(QtyValue)
-		when 1 then SUM(NetValue)
-		when 2 then SUM(GrossValue)
-		when 3 then SUM(ProfitValue)
-	End as Value,
+        <CommandText>SELECT
+  UniqueID,
+  Date,
+  CustRef,
+  CustName,
+  SiteName,
+  CASE
+    WHEN DATEPART(YEAR, DueDate) = 1999 THEN NULL
+    ELSE DueDate
+  END AS DueDate,
+  GL,
+  GLDescription,
+  JonasGroup,
+  JonasGroupName,
+  MaintenanceType,
+  MaintTypeDescription,
+  ReportingDescription,
+  ItemDescription,
+  CASE
+    WHEN @Source = 2 THEN CASE @ValueOption
+        WHEN 0 THEN SUM(QtyValue)
+        WHEN 1 THEN SUM(NetValue) * SUM(QtyValue)
+        WHEN 2 THEN SUM(GrossValue) * SUM(QtyValue)
+        WHEN 3 THEN SUM(ProfitValue) * SUM(QtyValue)
+      END
+    ELSE CASE @ValueOption
+        WHEN 0 THEN SUM(QtyValue)
+        WHEN 1 THEN SUM(NetValue)
+        WHEN 2 THEN SUM(GrossValue)
+        WHEN 3 THEN SUM(ProfitValue)
+      END
+  END
+  AS Value,
 
-	Case @ValueOption
-		when 0 then 'Qty'
-		when 1 then 'Net'
-		when 2 then 'Gross'
-		when 3 then 'Profit'
-	End as ValueName,
-	InvoiceNo,
-CustOrderNo,
-UniqueId2,
-	Case MiniPack
-		when 0 then 'No (Or N/A)'
-		when 1 then 'Pending'
-		when 2 then 'Chasing'
-		when 3 then 'Received'
-		when 4 then 'Other/Unknown'
-		End as MiniPack,
-	SiteSurveyDate,
-Case when Len(BacklogComments) &gt;22 then 	
-Left(backlogcomments,22) + '...' else BacklogComments end as BacklogCommentsShort,
-	BacklogComments,
-	Deposit,
-	AssignedTo,
-	MegJobNo,
-	Case DirectDebit
-		when 0 then 'No (Or N/A)'
-		when 1 then 'Pending'
-		when 2 then 'Chasing'
-		when 3 then 'Received'
-		when 4 then 'Other/Unknown'
-		End as DirectDebit,
-	Spare1,
-	Spare2
-from 
-	saleledgerextended
-where 
-	(@Source = 2 and
-	(ImportType = 'OpenCRM Sales Order' or ImportType = 'OpenCRM' )and
-	(([EntryType] = 'OpenCRM Sales Order' or [EntryType] = 'OpenCRM'))
-	and ((@DateOptions = 0 and Date between @DateFrom and @DateTo) or (@DateOptions = 1))
-	and (DueDate &gt; '2015/01/01' or DueDate is null or DatePart(year,DueDate) = 1999)) and
-	(@MiniPack = -1 or MiniPack = @MiniPack) and
-	(@DirectDebit = -1 or DirectDebit = @DirectDebit) and
-	(LTrim(RTrim(@Search)) = '' or SiteSurveyDate like '%' + @Search + '%' or BacklogComments like '%' + @Search + '%' or Deposit like '%' + @Search + '%' or AssignedTo like '%' + @Search + '%' or MegJobNo like '%' + @Search + '%' or DirectDebit like '%' + @Search + '%' or Spare1 like '%' + @Search + '%' or Spare2 like '%' + @Search + '%' or CustName like '%' + @Search + '%' or SiteName like '%' + @Search + '%' or CustRef like '%' + @Search + '%' or ItemDescription like '%' + @Search + '%')
-group by
-	UniqueID,
-	ItemDescription,
-	Date,
-	CustRef,
-	DueDate,
-	GL,
-	GLDescription,
-	ItemDescription,
-	InvoiceNo,
-	JonasGroup,
-	JonasGroupName,
-	MaintenanceType,
-	MaintTypeDescription,
-	ReportingDescription,
-	CustOrderNo,
-	CustName,
-	SiteName,
-	UniqueId2,
-		MiniPack,
-	SiteSurveyDate,
-	BacklogComments,
-	Deposit,
-	AssignedTo,
-	MegJobNo,
-	DirectDebit,
-	Spare1,
-	Spare2
-order by 
-	DatePart(month,DueDate) + Datepart(yyyy,DueDate), 
-	CustOrderNo</CommandText>
+  CASE @ValueOption
+    WHEN 0 THEN 'Qty'
+    WHEN 1 THEN 'Net'
+    WHEN 2 THEN 'Gross'
+    WHEN 3 THEN 'Profit'
+  END AS ValueName,
+  InvoiceNo,
+  CustOrderNo,
+  UniqueId2,
+  CASE MiniPack
+    WHEN 0 THEN 'N/A'
+    WHEN 1 THEN 'Pending'
+    WHEN 2 THEN 'Chasing'
+    WHEN 3 THEN 'Received'
+    WHEN -1 THEN 'Other/Unknown'
+    WHEN 4 THEN 'No'
+  END AS MiniPack,
+  SiteSurveyDate,
+  CASE
+    WHEN LEN(BacklogComments) &gt; 22 THEN LEFT(backlogcomments, 22) + '...'
+    ELSE BacklogComments
+  END AS BacklogCommentsShort,
+  BacklogComments,
+  Deposit,
+  AssignedTo,
+  MegJobNo,
+  CASE DirectDebit
+    WHEN 0 THEN 'N/A'
+    WHEN 1 THEN 'Pending'
+    WHEN 2 THEN 'Chasing'
+    WHEN 3 THEN 'Received'
+    WHEN -1 THEN 'Other/Unknown'
+    WHEN 4 THEN 'No'
+  END AS DirectDebit,
+  Spare1,
+  TerminalTypeName, 
+  Spare2,
+  AdminStatusName
+FROM saleledgerextended
+WHERE (@Source = 2
+AND (ImportType = 'OpenCRM Sales Order'
+OR ImportType = 'OpenCRM')
+AND (([EntryType] = 'OpenCRM Sales Order'
+OR [EntryType] = 'OpenCRM'))
+AND ((@DateOptions = 0
+AND Date BETWEEN @DateFrom AND @DateTo)
+OR (@DateOptions = 1))
+AND (DueDate &gt; '2015/01/01'
+OR DueDate IS NULL
+OR DATEPART(YEAR, DueDate) = 1999))
+AND (@MiniPack = -2
+OR MiniPack = @MiniPack)
+AND (@DirectDebit = -2
+OR DirectDebit = @DirectDebit)
+AND (LTRIM(RTRIM(@Search)) = ''
+OR SiteSurveyDate LIKE '%' + @Search + '%'
+OR BacklogComments LIKE '%' + @Search + '%'
+OR Deposit LIKE '%' + @Search + '%'
+OR AssignedTo LIKE '%' + @Search + '%'
+OR MegJobNo LIKE '%' + @Search + '%'
+OR DirectDebit LIKE '%' + @Search + '%'
+OR CustName LIKE '%' + @Search + '%'
+OR SiteName LIKE '%' + @Search + '%'
+OR CustRef LIKE '%' + @Search + '%'
+OR ItemDescription LIKE '%' + @Search + '%')
+AND IsNull(Spare1,'-1') in (@TerminalTypes)
+AND IsNull(Spare2,'-1') in (@AdminStatuses)
+GROUP BY UniqueID,
+         ItemDescription,
+         Date,
+         CustRef,
+         DueDate,
+         GL,
+         GLDescription,
+         ItemDescription,
+         InvoiceNo,
+         JonasGroup,
+         JonasGroupName,
+         MaintenanceType,
+         MaintTypeDescription,
+         ReportingDescription,
+         CustOrderNo,
+         CustName,
+         SiteName,
+         UniqueId2,
+         MiniPack,
+         SiteSurveyDate,
+         BacklogComments,
+         Deposit,
+         AssignedTo,
+         MegJobNo,
+         DirectDebit,
+         Spare1,
+         TerminalTypeName,
+         Spare2,
+         AdminStatusName
+ORDER BY DATEPART(MONTH, DueDate) + DATEPART(yyyy, DueDate),
+CustOrderNo</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
@@ -253,6 +295,14 @@ order by
           <DataField>Spare2</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="TerminalTypeName">
+          <DataField>TerminalTypeName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AdminStatusName">
+          <DataField>AdminStatusName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="DateParameter">
@@ -352,6 +402,43 @@ order by Date Desc</CommandText>
         <Field Name="marker">
           <DataField>marker</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="AdminStatus">
+      <Query>
+        <DataSourceName>Embedded</DataSourceName>
+        <CommandText>Select * from AdminStatuses
+Union
+Select -1, 'Unknown'</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="AdminStatusId">
+          <DataField>AdminStatusId</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="AdminStatusName">
+          <DataField>AdminStatusName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="TerminalTypes">
+      <Query>
+        <DataSourceName>Embedded</DataSourceName>
+        <CommandText>Select * from TerminalTypes
+Union
+Select -1, 'Unknown'</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="TerminalTypeId">
+          <DataField>TerminalTypeId</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="TerminalTypeName">
+          <DataField>TerminalTypeName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -553,9 +640,6 @@ order by Date Desc</CommandText>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>36.64167mm</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>72.09583mm</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>30.68541mm</Width>
@@ -838,44 +922,6 @@ order by Date Desc</CommandText>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox44</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <LeftBorder>
-                              <Style>Solid</Style>
-                            </LeftBorder>
-                            <BackgroundColor>#e6c49b</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox49">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style>
-                                    <FontFamily>Calibri</FontFamily>
-                                    <FontSize>9pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox49</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -1377,41 +1423,6 @@ order by Date Desc</CommandText>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox50">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value>=Fields!BacklogComments.Value</Value>
-                                  <Style>
-                                    <FontFamily>Calibri</FontFamily>
-                                    <FontSize>9pt</FontSize>
-                                    <FontWeight>Normal</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox50</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>#e9e9e9</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
                         <Textbox Name="Textbox57">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -1559,7 +1570,7 @@ order by Date Desc</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Spare1.Value</Value>
+                                  <Value>=Fields!TerminalTypeName.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -1597,7 +1608,7 @@ order by Date Desc</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Spare2.Value</Value>
+                                  <Value>=Fields!AdminStatusName.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -1863,41 +1874,6 @@ order by Date Desc</CommandText>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox46</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>=IIF(RowNumber(Nothing) MOD 2, "#f2f2f2", "#e2edf7")</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox51">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Calibri</FontFamily>
-                                    <FontSize>8pt</FontSize>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox51</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -2383,41 +2359,6 @@ order by Date Desc</CommandText>
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox52">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Calibri</FontFamily>
-                                    <FontSize>8pt</FontSize>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox52</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>=IIF(RowNumber(Nothing) MOD 2, "#f2f2f2", "#e2edf7")</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
                         <Textbox Name="Textbox60">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -2868,41 +2809,6 @@ order by Date Desc</CommandText>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox48</rd:DefaultName>
-                          <Style>
-                            <Border>
-                              <Color>LightGrey</Color>
-                              <Style>Solid</Style>
-                            </Border>
-                            <BackgroundColor>LightSteelBlue</BackgroundColor>
-                            <PaddingLeft>2pt</PaddingLeft>
-                            <PaddingRight>2pt</PaddingRight>
-                            <PaddingTop>2pt</PaddingTop>
-                            <PaddingBottom>2pt</PaddingBottom>
-                          </Style>
-                        </Textbox>
-                      </CellContents>
-                    </TablixCell>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="Textbox53">
-                          <CanGrow>true</CanGrow>
-                          <KeepTogether>true</KeepTogether>
-                          <Paragraphs>
-                            <Paragraph>
-                              <TextRuns>
-                                <TextRun>
-                                  <Value />
-                                  <Style>
-                                    <FontFamily>Calibri</FontFamily>
-                                    <FontSize>9pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                              </TextRuns>
-                              <Style />
-                            </Paragraph>
-                          </Paragraphs>
-                          <rd:DefaultName>Textbox53</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -3473,65 +3379,8 @@ order by Date Desc</CommandText>
                     </CellContents>
                   </TablixHeader>
                   <Visibility>
-                    <Hidden>=IIF(Parameters!ShowFullComments.Value = true, false, true)</Hidden>
+                    <Hidden>true</Hidden>
                     <ToggleItem>ColumnExtender</ToggleItem>
-                  </Visibility>
-                </TablixMember>
-                <TablixMember>
-                  <TablixHeader>
-                    <Size>9.96875mm</Size>
-                    <CellContents>
-                      <Textbox Name="Textbox10">
-                        <CanGrow>true</CanGrow>
-                        <KeepTogether>true</KeepTogether>
-                        <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value>Full</Value>
-                                <Style>
-                                  <FontFamily>Calibri</FontFamily>
-                                  <FontWeight>Bold</FontWeight>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style>
-                              <TextAlign>Center</TextAlign>
-                            </Style>
-                          </Paragraph>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value>Comments</Value>
-                                <Style>
-                                  <FontFamily>Calibri</FontFamily>
-                                  <FontWeight>Bold</FontWeight>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style>
-                              <TextAlign>Center</TextAlign>
-                            </Style>
-                          </Paragraph>
-                        </Paragraphs>
-                        <rd:DefaultName>Textbox10</rd:DefaultName>
-                        <Style>
-                          <Border>
-                            <Color>LightGrey</Color>
-                            <Style>Solid</Style>
-                          </Border>
-                          <BackgroundColor>LightSteelBlue</BackgroundColor>
-                          <VerticalAlign>Middle</VerticalAlign>
-                          <PaddingLeft>2pt</PaddingLeft>
-                          <PaddingRight>2pt</PaddingRight>
-                          <PaddingTop>2pt</PaddingTop>
-                          <PaddingBottom>2pt</PaddingBottom>
-                        </Style>
-                      </Textbox>
-                    </CellContents>
-                  </TablixHeader>
-                  <Visibility>
-                    <Hidden>=Parameters!ShowFullComments.Value</Hidden>
                   </Visibility>
                 </TablixMember>
                 <TablixMember>
@@ -3721,7 +3570,7 @@ order by Date Desc</CommandText>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>Spare 1</Value>
+                                <Value>Till Type</Value>
                                 <Style>
                                   <FontFamily>Calibri</FontFamily>
                                   <FontWeight>Bold</FontWeight>
@@ -3768,7 +3617,7 @@ order by Date Desc</CommandText>
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>Spare 2</Value>
+                                <Value>Admin Status</Value>
                                 <Style>
                                   <FontFamily>Calibri</FontFamily>
                                   <FontWeight>Bold</FontWeight>
@@ -4412,7 +4261,7 @@ true, "9pt")</FontSize>
             <Top>0mm</Top>
             <Left>1.02658mm</Left>
             <Height>37.66875mm</Height>
-            <Width>529.99235mm</Width>
+            <Width>457.89652mm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -4420,17 +4269,17 @@ true, "9pt")</FontSize>
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>45.54542mm</Height>
+        <Height>41.57667mm</Height>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
         </Style>
       </Body>
-      <Width>531.01893mm</Width>
+      <Width>461.96268mm</Width>
       <Page>
         <PageHeader>
-          <Height>18.7mm</Height>
+          <Height>29.8125mm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -4456,6 +4305,42 @@ true, "9pt")</FontSize>
                     <TextRun>
                       <Value>=IIF(
 Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; Parameters!DateTo.Value, Parameters!DateOptions.Label)</Value>
+                      <Style>
+                        <FontFamily>Segoe UI</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <Format>dd/MM/yyyy</Format>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=IIF(Join(Parameters!AdminStatuses.Label, ", ").Length &gt; 50, "Hover To See Statuses (Within Report Only)", Join(Parameters!AdminStatuses.Label,", "))</Value>
+                      <ToolTip>=Join(Parameters!AdminStatuses.Label,", ")</ToolTip>
+                      <Style>
+                        <FontFamily>Segoe UI</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <Format>dd/MM/yyyy</Format>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=IIF(Join(Parameters!TerminalTypes.Label, ", ").Length &gt; 50, "Hover to See Terminal Types (Within Report Only)", Join(Parameters!TerminalTypes.Label, ", "))</Value>
+                      <ToolTip>=Join(Parameters!TerminalTypes.Label, ", ")</ToolTip>
+                      <Style>
+                        <FontFamily>Segoe UI</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <Format>dd/MM/yyyy</Format>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
+                      <Value xml:space="preserve"> </Value>
                       <Style>
                         <FontFamily>Segoe UI</FontFamily>
                         <FontSize>9pt</FontSize>
@@ -4498,9 +4383,9 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
               </Paragraphs>
               <rd:DefaultName>Textbox1</rd:DefaultName>
               <Top>0.9525mm</Top>
-              <Left>56.43955mm</Left>
-              <Height>16.67152mm</Height>
-              <Width>88.00556mm</Width>
+              <Left>29.71664mm</Left>
+              <Height>25.93194mm</Height>
+              <Width>149.30069mm</Width>
               <Style>
                 <Border>
                   <Style>None</Style>
@@ -4545,6 +4430,32 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
+                      <Value>Admin Statuses:</Value>
+                      <Style>
+                        <FontFamily>Segoe UI</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Terminal Types:</Value>
+                      <Style>
+                        <FontFamily>Segoe UI</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style />
+                </Paragraph>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
                       <Value>Last Imported:</Value>
                       <Style>
                         <FontFamily>Segoe UI</FontFamily>
@@ -4574,8 +4485,8 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
               <rd:DefaultName>Textbox7</rd:DefaultName>
               <Top>0.9525mm</Top>
               <Left>1.02658mm</Left>
-              <Height>16.67152mm</Height>
-              <Width>54.70742mm</Width>
+              <Height>25.93194mm</Height>
+              <Width>26.92617mm</Width>
               <ZIndex>1</ZIndex>
               <Style>
                 <Border>
@@ -4598,7 +4509,6 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
                       <Value>Value Option:</Value>
                       <Style>
                         <FontFamily>Segoe UI</FontFamily>
-                        <FontSize>9pt</FontSize>
                         <FontWeight>Bold</FontWeight>
                       </Style>
                     </TextRun>
@@ -4610,8 +4520,8 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
               </Paragraphs>
               <rd:DefaultName>Textbox7</rd:DefaultName>
               <Top>0.9525mm</Top>
-              <Left>145.85622mm</Left>
-              <Height>5.17097mm</Height>
+              <Left>180.78122mm</Left>
+              <Height>7.99319mm</Height>
               <Width>53.18911mm</Width>
               <ZIndex>2</ZIndex>
               <Style>
@@ -4647,9 +4557,9 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox7</rd:DefaultName>
-              <Top>7.1818mm</Top>
-              <Left>145.85622mm</Left>
-              <Height>10.44222mm</Height>
+              <Top>12.20889mm</Top>
+              <Left>180.78122mm</Left>
+              <Height>14.67555mm</Height>
               <Width>53.18911mm</Width>
               <ZIndex>3</ZIndex>
               <Style>
@@ -4672,7 +4582,7 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
           </Style>
         </PageHeader>
         <PageFooter>
-          <Height>0.44125cm</Height>
+          <Height>0.6cm</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
@@ -4697,6 +4607,7 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>ReportName</rd:DefaultName>
+              <Top>0cm</Top>
               <Left>11.29453cm</Left>
               <Height>0.44125cm</Height>
               <Width>8.79708cm</Width>
@@ -4928,19 +4839,19 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>-1</Value>
+          <Value>-2</Value>
         </Values>
       </DefaultValue>
       <Prompt>Mini Pack</Prompt>
       <ValidValues>
         <ParameterValues>
           <ParameterValue>
-            <Value>-1</Value>
+            <Value>-2</Value>
             <Label>All</Label>
           </ParameterValue>
           <ParameterValue>
             <Value>0</Value>
-            <Label>No (Or N/A)</Label>
+            <Label>N/A</Label>
           </ParameterValue>
           <ParameterValue>
             <Value>1</Value>
@@ -4956,7 +4867,11 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
           </ParameterValue>
           <ParameterValue>
             <Value>4</Value>
-            <Label>Other / Unknown</Label>
+            <Label>No</Label>
+          </ParameterValue>
+          <ParameterValue>
+            <Value>-1</Value>
+            <Label>Other/Unknown</Label>
           </ParameterValue>
         </ParameterValues>
       </ValidValues>
@@ -4965,19 +4880,19 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
       <DataType>Integer</DataType>
       <DefaultValue>
         <Values>
-          <Value>-1</Value>
+          <Value>-2</Value>
         </Values>
       </DefaultValue>
       <Prompt>Direct Debit</Prompt>
       <ValidValues>
         <ParameterValues>
           <ParameterValue>
-            <Value>-1</Value>
+            <Value>-2</Value>
             <Label>All</Label>
           </ParameterValue>
           <ParameterValue>
             <Value>0</Value>
-            <Label>No</Label>
+            <Label>N/A</Label>
           </ParameterValue>
           <ParameterValue>
             <Value>1</Value>
@@ -4993,24 +4908,55 @@ Parameters!DateOptions.Value = 0, Parameters!DateFrom.Value &amp; " to " &amp; P
           </ParameterValue>
           <ParameterValue>
             <Value>4</Value>
+            <Label>No</Label>
+          </ParameterValue>
+          <ParameterValue>
+            <Value>-1</Value>
             <Label>Other / Unknown</Label>
           </ParameterValue>
         </ParameterValues>
       </ValidValues>
     </ReportParameter>
+    <ReportParameter Name="TerminalTypes">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <DataSetReference>
+          <DataSetName>TerminalTypes</DataSetName>
+          <ValueField>TerminalTypeId</ValueField>
+        </DataSetReference>
+      </DefaultValue>
+      <Prompt>Terminal Types</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>TerminalTypes</DataSetName>
+          <ValueField>TerminalTypeId</ValueField>
+          <LabelField>TerminalTypeName</LabelField>
+        </DataSetReference>
+      </ValidValues>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
+    <ReportParameter Name="AdminStatuses">
+      <DataType>Integer</DataType>
+      <DefaultValue>
+        <DataSetReference>
+          <DataSetName>AdminStatus</DataSetName>
+          <ValueField>AdminStatusId</ValueField>
+        </DataSetReference>
+      </DefaultValue>
+      <Prompt>Admin Statuses</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>AdminStatus</DataSetName>
+          <ValueField>AdminStatusId</ValueField>
+          <LabelField>AdminStatusName</LabelField>
+        </DataSetReference>
+      </ValidValues>
+      <MultiValue>true</MultiValue>
+    </ReportParameter>
     <ReportParameter Name="Search">
       <DataType>String</DataType>
       <AllowBlank>true</AllowBlank>
       <Prompt>Search</Prompt>
-    </ReportParameter>
-    <ReportParameter Name="ShowFullComments">
-      <DataType>Boolean</DataType>
-      <DefaultValue>
-        <Values>
-          <Value>false</Value>
-        </Values>
-      </DefaultValue>
-      <Prompt>Show Full Comments</Prompt>
     </ReportParameter>
   </ReportParameters>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>

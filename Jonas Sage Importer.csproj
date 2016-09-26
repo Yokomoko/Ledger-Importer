@@ -322,7 +322,12 @@
       <FileType>Assembly</FileType>
     </PublishFile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\BL_JonasSageImporter\BL_JonasSageImporter.csproj">
+      <Project>{1205b7d6-e6f0-4fa4-8344-13f73b2674fe}</Project>
+      <Name>BL_JonasSageImporter</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
